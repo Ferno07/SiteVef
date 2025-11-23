@@ -37,3 +37,10 @@ Route::post('/accueilMessage', [ControllerAccueil::class, 'message'])
 
 
 
+
+// Donation Routes
+use App\Http\Controllers\DonationController;
+
+Route::get('/don', [DonationController::class, 'index'])->name('donation.index');
+Route::post('/don/checkout', [DonationController::class, 'checkout'])->name('donation.checkout');
+Route::get('/don/merci', [DonationController::class, 'success'])->name('donation.success');

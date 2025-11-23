@@ -102,7 +102,7 @@
           </div>
         </div>
         <div class="gallery-button">
-          <a class="btn primary" href="#order">Faire un don</a>
+          <a class="btn primary" href="{{ route('donation.index') }}">Faire un don</a>
         </div>
       </div>
     </section>
@@ -211,7 +211,7 @@
         <h2>Soutenez-nous</h2>
         <div class="support-content">
           <p class="support-text">Votre soutien est essentiel pour mener à bien nos missions humanitaires. Chaque contribution, aussi modeste soit-elle, a un impact réel sur la vie des personnes que nous aidons. Avec votre générosité, nous pouvons continuer à construire des écoles, améliorer l'accès aux soins de santé, soutenir l'autonomisation des femmes et créer des opportunités économiques durables. Ensemble, nous transformons des vies et bâtissons un avenir meilleur pour les communautés les plus vulnérables. Rejoignez-nous dans cette belle aventure de solidarité et de compassion. Votre engagement fait toute la différence.</p>
-          <a href="payement.html" class="btn primary support-button">Donnez le sourire</a>
+          <a href="{{ route('donation.index') }}" class="btn primary support-button">Donnez le sourire</a>
         </div>
       </div>
     </section>

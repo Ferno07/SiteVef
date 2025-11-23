@@ -18,23 +18,23 @@
   <header class="site-header">
     <div class="header-wrapper">
       <div class="header-inner">
-      <a class="logo" href="#">
+      <a class="logo" href="{{ url('/') }}">
         <img src="{{ asset('Style1/images/logo.png') }}" alt="Logo VEF">
       </a>
       <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
       <nav class="main-nav" aria-label="Navigation principale">
         <ul>
-          <li><a href="#hero">Accueil</a></li>
-          <li><a href="#about">À propos</a></li>
-          <li><a href="#services">Nos projets</a></li>
-          <li><a href="#contact">Bénéficier</a></li>
+          <li><a href="{{ url('/#hero') }}">Accueil</a></li>
+          <li><a href="{{ url('/#about') }}">À propos</a></li>
+          <li><a href="{{ url('/#services') }}">Nos projets</a></li>
+          <li><a href="{{ url('/#contact') }}">Bénéficier</a></li>
          
           <li><a href="{{ route('rejoindre') }}">Nous rejoindre</a></li>
 
-          <li><a href="#contact">Contact</a></li>
+          <li><a href="{{ url('/#contact') }}">Contact</a></li>
         </ul>
       </nav>
-      <a class="btn cta" href="payement.html">Faire un don</a>
+      <a class="btn cta" href="{{ route('donation.index') }}">Faire un don</a>
       </div>
     </div>
   </header>
