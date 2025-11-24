@@ -1,284 +1,70 @@
 @extends('app')
 
 @section('content')
-<style>
-    .donation-section {
-        background-color: #f3f4f6;
-        padding: 4rem 1rem;
-        min-height: 80vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: 'Inter', sans-serif;
-    }
-    .donation-card {
-        background: white;
-        border-radius: 1.5rem;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        max-width: 700px;
-        width: 100%;
-        overflow: hidden;
-        padding: 3rem;
-        border: 1px solid #e5e7eb;
-    }
-    .donation-header {
-        text-align: center;
-        margin-bottom: 2.5rem;
-    }
-    .donation-header h2 {
-        font-size: 2.25rem;
-        color: #111827;
-        margin-bottom: 0.75rem;
-        font-weight: 800;
-        letter-spacing: -0.025em;
-    }
-    .donation-header p {
-        color: #6b7280;
-        font-size: 1.125rem;
-        line-height: 1.75rem;
-    }
-    .amount-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-    @media (min-width: 640px) {
-        .amount-grid {
-            grid-template-columns: repeat(4, 1fr);
-        }
-    }
-    .amount-option {
-        position: relative;
-    }
-    .amount-option input {
-        position: absolute;
-        opacity: 0;
-        cursor: pointer;
-        height: 100%;
-        width: 100%;
-        z-index: 10;
-    }
-    .amount-box {
-        border: 2px solid #e5e7eb;
-        border-radius: 1rem;
-        padding: 1.5rem 0.5rem;
-        text-align: center;
-        transition: all 0.2s ease-in-out;
-        cursor: pointer;
-        background-color: #fff;
-        position: relative;
-        overflow: hidden;
-    }
-    .amount-option input:checked + .amount-box {
-        border-color: #2563eb;
-        background-color: #eff6ff;
-        color: #2563eb;
-        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1), 0 2px 4px -1px rgba(37, 99, 235, 0.06);
-        transform: translateY(-2px);
-    }
-    .amount-option input:hover + .amount-box {
-        border-color: #93c5fd;
-    }
-    .amount-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        display: block;
-    }
-    .check-icon {
-        position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
-        width: 1.25rem;
-        height: 1.25rem;
-        color: #2563eb;
-        opacity: 0;
-        transition: opacity 0.2s;
-    }
-    .amount-option input:checked + .amount-box .check-icon {
-        opacity: 1;
-    }
-    .custom-amount {
-        margin-bottom: 2.5rem;
-    }
-    .custom-amount label {
-        display: block;
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: #374151;
-        margin-bottom: 0.75rem;
-    }
-    .input-wrapper {
-        position: relative;
-    }
-    .currency-symbol {
-        position: absolute;
-        left: 1.25rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #9ca3af;
-        font-weight: 500;
-        font-size: 1.1rem;
-    }
-    .custom-input {
-        width: 100%;
-        padding: 1rem 1rem 1rem 2.5rem;
-        border: 2px solid #e5e7eb;
-        border-radius: 0.75rem;
-        font-size: 1.1rem;
-        transition: all 0.2s;
-        background-color: #f9fafb;
-    }
-    .custom-input:focus {
-        outline: none;
-        border-color: #2563eb;
-        background-color: #fff;
-        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-    }
-    .submit-btn {
-        width: 100%;
-        background: linear-gradient(to right, #2563eb, #1d4ed8);
-        color: white;
-        padding: 1.25rem;
-        border: none;
-        border-radius: 0.75rem;
-        font-size: 1.125rem;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.2s;
-        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2), 0 2px 4px -1px rgba(37, 99, 235, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.75rem;
-    }
-    .submit-btn:hover {
-        background: linear-gradient(to right, #1d4ed8, #1e40af);
-        transform: translateY(-1px);
-        box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3), 0 4px 6px -2px rgba(37, 99, 235, 0.15);
-    }
-    .submit-btn:active {
-        transform: translateY(0);
-    }
-    .secure-notice {
-        text-align: center;
-        margin-top: 1.5rem;
-        font-size: 0.875rem;
-        color: #6b7280;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-    }
-    .alert-error {
-        background-color: #fef2f2;
-        border: 1px solid #fee2e2;
-        color: #b91c1c;
-        padding: 1rem;
-        border-radius: 0.75rem;
-        margin-bottom: 2rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    /* Fix for missing Tailwind classes on SVGs */
-    .submit-btn svg {
-        width: 1.25rem;
-        height: 1.25rem;
-    }
-    .secure-notice svg {
-        width: 1rem;
-        height: 1rem;
-        color: #059669; /* Green color for the shield */
-    }
-    .alert-error svg {
-        width: 1.25rem;
-        height: 1.25rem;
-    }
-</style>
 
-<div class="donation-section">
-    <div class="donation-card">
-        <div class="donation-header">
-            <h2>Faire un don</h2>
-            <p>Votre soutien nous permet de continuer nos actions. Chaque don compte.</p>
+<main class="bg-gray-50 min-h-screen flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl w-full space-y-8 bg-white p-8 sm:p-12 rounded-2xl shadow-xl border border-gray-100">
+        <div class="text-center">
+            <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl mb-4">Faire un don</h2>
+            <p class="text-lg text-gray-600">
+                Votre soutien nous permet de continuer nos actions. Chaque don compte.
+            </p>
         </div>
 
         @if(session('error'))
-            <div class="alert-error">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+            <div class="rounded-md bg-red-50 p-4 border border-red-200 flex items-center gap-3">
+                <svg class="h-5 w-5 text-red-400 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
                 </svg>
-                {{ session('error') }}
+                <p class="text-sm font-medium text-red-800">{{ session('error') }}</p>
             </div>
         @endif
 
-        <form action="{{ route('donation.checkout') }}" method="POST">
+        <form action="{{ route('donation.checkout') }}" method="POST" class="mt-8 space-y-8">
             @csrf
             
-            <div class="amount-grid">
-                <label class="amount-option">
-                    <input type="radio" name="amount" value="10">
-                    <div class="amount-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="check-icon" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        <span class="amount-value">10 €</span>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                @foreach([10, 20, 50, 100] as $amount)
+                <label class="relative cursor-pointer group">
+                    <input type="radio" name="amount" value="{{ $amount }}" {{ $amount == 20 ? 'checked' : '' }} class="peer sr-only">
+                    <div class="w-full py-4 px-2 text-center rounded-xl border-2 border-gray-200 bg-white text-gray-900 font-bold text-xl transition-all peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-600 peer-hover:border-blue-300 shadow-sm hover:shadow-md">
+                        {{ $amount }} €
+                        <div class="absolute top-2 right-2 opacity-0 peer-checked:opacity-100 transition-opacity text-blue-600">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
                     </div>
                 </label>
-                <label class="amount-option">
-                    <input type="radio" name="amount" value="20" checked>
-                    <div class="amount-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="check-icon" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        <span class="amount-value">20 €</span>
-                    </div>
-                </label>
-                <label class="amount-option">
-                    <input type="radio" name="amount" value="50">
-                    <div class="amount-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="check-icon" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        <span class="amount-value">50 €</span>
-                    </div>
-                </label>
-                <label class="amount-option">
-                    <input type="radio" name="amount" value="100">
-                    <div class="amount-box">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="check-icon" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        <span class="amount-value">100 €</span>
-                    </div>
-                </label>
+                @endforeach
             </div>
 
-            <div class="custom-amount">
-                <label for="custom-amount">Ou montant libre</label>
-                <div class="input-wrapper">
-                    <span class="currency-symbol">€</span>
-                    <input type="number" name="custom_amount" id="custom-amount" class="custom-input" placeholder="Saisissez un montant">
+            <div>
+                <label for="custom-amount" class="block text-sm font-medium text-gray-700 mb-2">Ou montant libre</label>
+                <div class="relative rounded-md shadow-sm">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <span class="text-gray-500 sm:text-lg">€</span>
+                    </div>
+                    <input type="number" name="custom_amount" id="custom-amount" class="block w-full rounded-lg border-0 py-3 pl-8 pr-4 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-lg sm:leading-6 bg-gray-50 focus:bg-white transition-colors" placeholder="Saisissez un montant">
                 </div>
             </div>
 
-            <button type="submit" class="submit-btn">
+            <button type="submit" class="w-full flex items-center justify-center gap-3 rounded-xl bg-blue-600 px-8 py-4 text-base font-bold text-white shadow-lg hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all transform hover:scale-[1.02] hover:shadow-blue-500/30">
                 <span>Procéder au paiement sécurisé</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
             </button>
             
-            <p class="secure-notice">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+            <p class="text-center text-sm text-gray-500 flex items-center justify-center gap-2">
+                <svg class="h-4 w-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                 </svg>
                 Paiement 100% sécurisé et chiffré par Stripe.
             </p>
         </form>
     </div>
-</div>
+</main>
 
 <script>
     const radios = document.querySelectorAll('input[type="radio"]');

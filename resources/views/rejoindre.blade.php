@@ -1,138 +1,176 @@
 @extends('app')
+
 @section('content')
 
-  <main>
-    <section class="join-hero">
-      <div class="container">
-        <div class="container">
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-
-        <h1>Rejoignez notre association</h1>
-        <p class="join-subtitle">Participez à nos actions humanitaires et contribuez à améliorer la vie des communautés</p>
-      </div>
+<main class="bg-gray-50 min-h-screen">
+    <!-- Hero Section -->
+    <section class="relative bg-blue-900 py-20 sm:py-32 overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+        <div class="relative max-w-7xl mx-auto px-6 lg:px-8 text-center">
+            <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl mb-6">Rejoignez notre association</h1>
+            <p class="text-lg leading-8 text-blue-100 max-w-2xl mx-auto">
+                Participez à nos actions humanitaires et contribuez à améliorer la vie des communautés. Votre engagement fait la différence.
+            </p>
+        </div>
     </section>
 
-    <section class="join-form-section">
-      <div class="container">
-        <form class="join-form"    method="POST" action="{{ route('candidature.store') }}" novalidate   novalidate>
-         @csrf
-        <div class="form-section">
-            <h2>Informations personnelles</h2>
+    <!-- Form Section -->
+    <section class="py-16 sm:py-24">
+        <div class="max-w-3xl mx-auto px-6 lg:px-8">
             
-            <div class="form-row">
-              <div class="form-group">
-                <label for="nom">Nom <span class="required">*</span></label>
-                <input type="text" id="nom" name="nom" required>
-                <span class="error-message"></span>
-              </div>
-              
-              <div class="form-group">
-                <label for="prenom">Prénom <span class="required">*</span></label>
-                <input type="text" id="prenom" name="prenom" required>
-                <span class="error-message"></span>
-              </div>
+            @if(session('success'))
+                <div class="rounded-md bg-green-50 p-4 mb-8 border border-green-200">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
+                <form method="POST" action="{{ route('candidature.store') }}" class="p-8 sm:p-12 space-y-12">
+                    @csrf
+                    
+                    <!-- Personal Info -->
+                    <div class="border-b border-gray-900/10 pb-12">
+                        <h2 class="text-2xl font-bold leading-7 text-gray-900">Informations personnelles</h2>
+                        <p class="mt-1 text-sm leading-6 text-gray-600">Dites-nous en plus sur vous.</p>
+
+                        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                            <div class="sm:col-span-3">
+                                <label for="nom" class="block text-sm font-medium leading-6 text-gray-900">Nom <span class="text-red-500">*</span></label>
+                                <div class="mt-2">
+                                    <input type="text" name="nom" id="nom" required class="block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 bg-gray-50 focus:bg-white transition-colors">
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-3">
+                                <label for="prenom" class="block text-sm font-medium leading-6 text-gray-900">Prénom <span class="text-red-500">*</span></label>
+                                <div class="mt-2">
+                                    <input type="text" name="prenom" id="prenom" required class="block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 bg-gray-50 focus:bg-white transition-colors">
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-3">
+                                <label for="dateNaissance" class="block text-sm font-medium leading-6 text-gray-900">Date de naissance <span class="text-red-500">*</span></label>
+                                <div class="mt-2">
+                                    <input type="date" name="dateNaissance" id="dateNaissance" required class="block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 bg-gray-50 focus:bg-white transition-colors">
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-3">
+                                <label for="email" class="block text-sm font-medium leading-6 text-gray-900">E-mail <span class="text-red-500">*</span></label>
+                                <div class="mt-2">
+                                    <input type="email" name="email" id="email" required class="block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 bg-gray-50 focus:bg-white transition-colors">
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-3">
+                                <label for="telephone" class="block text-sm font-medium leading-6 text-gray-900">Téléphone <span class="text-red-500">*</span></label>
+                                <div class="mt-2">
+                                    <input type="tel" name="telephone" id="telephone" placeholder="+229 90 00 00 00" required class="block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 bg-gray-50 focus:bg-white transition-colors">
+                                </div>
+                            </div>
+
+                            <div class="col-span-full">
+                                <label for="adresse" class="block text-sm font-medium leading-6 text-gray-900">Adresse <span class="text-red-500">*</span></label>
+                                <div class="mt-2">
+                                    <input type="text" name="adresse" id="adresse" placeholder="Votre adresse complète" required class="block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 bg-gray-50 focus:bg-white transition-colors">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Engagement Info -->
+                    <div class="border-b border-gray-900/10 pb-12">
+                        <h2 class="text-2xl font-bold leading-7 text-gray-900">Votre engagement</h2>
+                        <p class="mt-1 text-sm leading-6 text-gray-600">Comment souhaitez-vous nous aider ?</p>
+
+                        <div class="mt-10 space-y-10">
+                            <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                                <div class="sm:col-span-3">
+                                    <label for="typeParticipation" class="block text-sm font-medium leading-6 text-gray-900">Type de participation <span class="text-red-500">*</span></label>
+                                    <div class="mt-2">
+                                        <select id="typeParticipation" name="typeParticipation" required class="block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:max-w-xs sm:text-sm sm:leading-6 bg-gray-50 focus:bg-white transition-colors" x-data @change="$el.value === 'autre' ? document.getElementById('autreTypeGroup').style.display = 'block' : document.getElementById('autreTypeGroup').style.display = 'none'">
+                                            <option value="">Sélectionnez une option</option>
+                                            <option value="stagiaire">Stagiaire</option>
+                                            <option value="benevole">Bénévole</option>
+                                            <option value="autre">Autre</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="sm:col-span-3" id="autreTypeGroup" style="display: none;">
+                                    <label for="autreType" class="block text-sm font-medium leading-6 text-gray-900">Précisez votre type de participation <span class="text-red-500">*</span></label>
+                                    <div class="mt-2">
+                                        <input type="text" name="autreType" id="autreType" placeholder="Ex: Partenaire, Consultant, etc." class="block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 bg-gray-50 focus:bg-white transition-colors">
+                                    </div>
+                                </div>
+
+                                <div class="col-span-full">
+                                    <label for="disponibilites" class="block text-sm font-medium leading-6 text-gray-900">Disponibilités <span class="text-red-500">*</span></label>
+                                    <div class="mt-2">
+                                        <textarea id="disponibilites" name="disponibilites" rows="3" placeholder="Ex: Disponible les week-ends, 2 jours par semaine, etc." required class="block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 bg-gray-50 focus:bg-white transition-colors"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <fieldset>
+                                <legend class="text-sm font-semibold leading-6 text-gray-900">Préférence d'action <span class="text-red-500">*</span></legend>
+                                <div class="mt-6 space-y-6">
+                                    <div class="flex items-center gap-x-3">
+                                        <input id="action-locale" name="preferenceAction" type="radio" value="locale" required class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-600">
+                                        <label for="action-locale" class="block text-sm font-medium leading-6 text-gray-900">Locale</label>
+                                    </div>
+                                    <div class="flex items-center gap-x-3">
+                                        <input id="action-nationale" name="preferenceAction" type="radio" value="nationale" required class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-600">
+                                        <label for="action-nationale" class="block text-sm font-medium leading-6 text-gray-900">Nationale</label>
+                                    </div>
+                                    <div class="flex items-center gap-x-3">
+                                        <input id="action-internationale" name="preferenceAction" type="radio" value="internationale" required class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-600">
+                                        <label for="action-internationale" class="block text-sm font-medium leading-6 text-gray-900">Internationale</label>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <div class="col-span-full">
+                                <label for="motivation" class="block text-sm font-medium leading-6 text-gray-900">Lettre de motivation <span class="text-red-500">*</span></label>
+                                <div class="mt-2">
+                                    <textarea id="motivation" name="motivation" rows="6" placeholder="Expliquez pourquoi vous souhaitez rejoindre notre association et ce que vous pouvez apporter..." required class="block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 bg-gray-50 focus:bg-white transition-colors"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RGPD -->
+                    <div class="border-b border-gray-900/10 pb-12">
+                        <div class="relative flex gap-x-3">
+                            <div class="flex h-6 items-center">
+                                <input id="rgpd" name="rgpd" type="checkbox" value="1" required class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600">
+                            </div>
+                            <div class="text-sm leading-6">
+                                <label for="rgpd" class="font-medium text-gray-900">Confidentialité des données <span class="text-red-500">*</span></label>
+                                <p class="text-gray-500">J'accepte que mes données personnelles soient utilisées conformément à la politique de confidentialité et au RGPD.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center justify-end gap-x-6">
+                        <button type="reset" class="text-sm font-semibold leading-6 text-gray-900 hover:text-blue-600 transition-colors">Réinitialiser</button>
+                        <button type="submit" class="rounded-full bg-blue-600 px-8 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all transform hover:scale-105">
+                            Envoyer ma candidature
+                        </button>
+                    </div>
+                </form>
             </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label for="dateNaissance">Date de naissance <span class="required">*</span></label>
-                <input type="date" id="dateNaissance" name="dateNaissance" required>
-                <span class="error-message"></span>
-              </div>
-              
-              <div class="form-group">
-                <label for="email">E-mail <span class="required">*</span></label>
-                <input type="email" id="email" name="email" required>
-                <span class="error-message"></span>
-              </div>
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label for="telephone">Téléphone <span class="required">*</span></label>
-                <input type="tel" id="telephone" name="telephone" placeholder="+229 90 00 00 00" required>
-                <span class="error-message"></span>
-              </div>
-              
-              <div class="form-group">
-                <label for="adresse">Adresse <span class="required">*</span></label>
-                <input type="text" id="adresse" name="adresse" placeholder="Votre adresse complète" required>
-                <span class="error-message"></span>
-              </div>
-            </div>
-          </div>
-
-          <div class="form-section">
-            <h2>Votre engagement</h2>
-            
-            <div class="form-group">
-              <label for="typeParticipation">Type de participation <span class="required">*</span></label>
-              <select id="typeParticipation" name="typeParticipation" required>
-                    <option value="">Sélectionnez une option</option>
-                    <option value="stagiaire">Stagiaire</option>
-                    <option value="benevole">Bénévole</option>
-                    <option value="autre">Autre</option>
-                </select>
-
-              <span class="error-message"></span>
-            </div>
-
-            <div class="form-group" id="autreTypeGroup" style="display: none;">
-              <label for="autreType">Précisez votre type de participation <span class="required">*</span></label>
-              <input type="text" id="autreType" name="autreType" placeholder="Ex: Partenaire, Consultant, etc.">
-              <span class="error-message"></span>
-            </div>
-
-            <div class="form-group">
-              <label for="disponibilites">Disponibilités <span class="required">*</span></label>
-              <textarea id="disponibilites" name="disponibilites" rows="3" placeholder="Ex: Disponible les week-ends, 2 jours par semaine, etc." required></textarea>
-              <span class="error-message"></span>
-            </div>
-
-            <div class="form-group">
-              <label for="preferenceAction">Préférence d'action <span class="required">*</span></label>
-              <div class="radio-group">
-                <label class="radio-option">
-                  <input type="radio" name="preferenceAction" value="locale" required>
-                  <span>Locale</span>
-                </label>
-                <label class="radio-option">
-                  <input type="radio" name="preferenceAction" value="nationale" required>
-                  <span>Nationale</span>
-                </label>
-                <label class="radio-option">
-                  <input type="radio" name="preferenceAction" value="internationale" required>
-                  <span>Internationale</span>
-                </label>
-              </div>
-              <span class="error-message"></span>
-            </div>
-
-            <div class="form-group">
-              <label for="motivation">Lettre de motivation <span class="required">*</span></label>
-              <textarea id="motivation" name="motivation" rows="6" placeholder="Expliquez pourquoi vous souhaitez rejoindre notre association et ce que vous pouvez apporter..." required></textarea>
-              <span class="error-message"></span>
-            </div>
-          </div>
-
-          <div class="form-section">
-            <div class="form-group checkbox-group">
-              <label class="checkbox-label">
-                <input type="checkbox" id="rgpd" name="rgpd" value="1" required>
-                <span>J'accepte que mes données personnelles soient utilisées conformément à la politique de confidentialité et au RGPD. <span class="required">*</span></span>
-              </label>
-              <span class="error-message"></span>
-            </div>
-          </div>
-
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Envoyer ma candidature</button>
-            <button type="reset" class="btn btn-secondary">Réinitialiser</button>
-          </div>
-        </form>
-      </div>
+        </div>
     </section>
-  </main>
-  @endsection
+</main>
+@endsection
