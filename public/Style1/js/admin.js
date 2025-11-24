@@ -89,7 +89,7 @@ function setupForms() {
   document.getElementById('export-all')?.addEventListener('click', exportAllData);
 
   // Boutons de rafraîchissement
-  document.getElementById('refresh-messages')?.addEventListener('click', loadMessages);
+ 
   document.getElementById('refresh-candidatures')?.addEventListener('click', loadCandidatures);
 
   // Recherche et filtres
@@ -101,7 +101,7 @@ function setupForms() {
   setupModals();
 
   // Charger les données depuis l'API au chargement
-  loadMessages();
+ 
   loadCandidatures();
 }
 
@@ -555,32 +555,7 @@ function escapeHtml(text) {
 const API_BASE_URL = 'http://localhost:8000/api';
 
 // Charger les messages depuis l'API
-async function loadMessages() {
-  const tbody = document.getElementById('messages-table-body');
-  if (!tbody) return;
 
-  tbody.innerHTML = '<tr><td colspan="8" class="loading-state">Chargement des messages...</td></tr>';
-
-  try {
-    const response = await fetch(`${API_BASE_URL}/messages`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error('Erreur lors du chargement des messages');
-    }
-
-    const messages = await response.json();
-    displayMessages(messages.data || messages);
-  } catch (error) {
-    console.error('Erreur:', error);
-    tbody.innerHTML = `<tr><td colspan="8" class="empty-state-table">Erreur de chargement. Vérifiez votre connexion à l'API Laravel.</td></tr>`;
-  }
-}
 
 // Afficher les messages dans le tableau
 function displayMessages(messages) {
@@ -935,5 +910,26 @@ function formatPreference(pref) {
 // Afficher les activités au chargement
 document.addEventListener('DOMContentLoaded', function() {
   displayActivities();
+});
+document.addEventListener('DOMContentLoaded', function() {
+    // Rafraîchir la page
+    const refreshBtn = document.getElementById('refresh-messages');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', function() {
+            location.reload();
+        });
+    }
+
+    // Filtrer les messages
+    const searchInput = document.getElementById('messages-search');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            const filter = this.value.toLowerCase();
+            document.querySelectorAll('#messages-table-body tr').forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
+    }
 });
 

@@ -6,6 +6,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Projet;
+use App\Models\Messages;
+
 
 class ControllerAdmin extends Controller
 
@@ -14,9 +16,10 @@ class ControllerAdmin extends Controller
 
     public function index()
         {
-            $projets = Projet::all();  // Récupère tous les projets
+            $projets = Projet::all();
+            $messages= Messages::all();
 
-            return view('admin.admin', compact('projets'));
+            return view('admin.admin', compact('projets','messages'));
         }
 
 
@@ -51,5 +54,25 @@ class ControllerAdmin extends Controller
 
         return redirect()->route('admin.projets.index');
 
+    }
+    public function destroy($id)
+    {
+        $projet = Projet::findOrFail($id); // récupère le projet ou renvoie 404
+        $projet->delete(); // supprime le projet
+
+        return redirect()->back()->with('success', 'Projet supprimé avec succès !');
+    }
+
+
+        public function toggleRead($id)
+    {
+        $message = Message::findOrFail($id);
+        $message->lu = !$message->lu; // inverse l'état
+        $message->save();
+
+        return response()->json([
+            'success' => true,
+            'lu' => $message->lu
+        ]);
     }
 }

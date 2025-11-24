@@ -288,48 +288,60 @@
       </div>
 
       <!-- Messages Panel -->
-      <div class="admin-panel" id="messages">
-        <div class="panel-header">
-          <h1>Messages reçus</h1>
-          <p>Gérer les messages du formulaire de contact</p>
-        </div>
-        <div class="panel-content-full">
-          <div class="table-controls">
+<!-- Messages Panel -->
+<div class="admin-panel" id="messages">
+    <div class="panel-header">
+        <h1>Messages reçus</h1>
+        <p>Gérer les messages du formulaire de contact</p>
+    </div>
+
+    <div class="panel-content-full">
+        <div class="table-controls">
             <button class="btn btn-primary" id="refresh-messages">Actualiser</button>
             <div class="table-filters">
-              <input type="text" id="messages-search" placeholder="Rechercher..." class="search-input">
+                <input type="text" id="messages-search" placeholder="Rechercher..." class="search-input">
             </div>
-          </div>
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Nom</th>
-                  <th>Prénom</th>
-                  <th>Email</th>
-                  <th>Objet</th>
-                  <th>Message</th>
-                  <th>Date</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="messages-table-body">
-                <tr>
-                  <td colspan="8" class="loading-state">Chargement des messages...</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div id="message-detail-modal" class="modal">
-            <div class="modal-content">
-              <span class="modal-close">&times;</span>
-              <h2>Détails du message</h2>
-              <div id="message-detail-content"></div>
-            </div>
-          </div>
         </div>
-      </div>
+
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Email</th>
+                        <th>Objet</th>
+                        <th>Message</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="messages-table-body">
+                    @forelse($messages as $message)
+                        <tr>
+                            <td>{{ $message->id }}</td>
+                            <td>{{ $message->nom }}</td>
+                            <td>{{ $message->prenom }}</td>
+                            <td>{{ $message->email }}</td>
+                            <td>{{ $message->objet }}</td>
+                            <td>{{ $message->message }}</td>
+                            <td>{{ $message->created_at->format('d/m/Y H:i') }}</td>
+                            <p>Total messages : {{ $messages->count() }}</p>
+
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="loading-state">Aucun message pour le moment.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
 
       <!-- Candidatures Panel -->
       <div class="admin-panel" id="candidatures">
