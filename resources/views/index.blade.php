@@ -6,7 +6,7 @@
 <section id="hero" class="relative h-screen flex items-center justify-center overflow-hidden">
     <!-- Background Image with Overlay -->
     <div class="absolute inset-0 z-0">
-        <img src="{{ asset('Style1/images/header1.jpg') }}" alt="Background" class="w-full h-full object-cover object-center" />
+        <img src="{{ asset('Style1/images/better.jpg') }}" alt="Background" class="w-full h-full object-cover object-center" />
         <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-gray-900/90"></div>
     </div>
 
@@ -49,7 +49,13 @@
         <div class="text-center mb-16">
             <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">À PROPOS DE NOUS</h2>
             <p class="mt-4 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">
-                Nos principales activités montrent comment nous œuvrons chaque jour pour un avenir meilleur.
+        L’Association humanitaire Verre d’Eau Fraîche est une Association à but non lucratif, une Organisation Non
+Gouvernementale, régie par la Constitution du 11 Décembre 1990, la loi du 1er juillet 1901 et son décret
+d’application. Elle n’est pas confessionnelle, ni de caractère religieux. Elle est apolitique et n’est d’aucune
+appartenance à une confession en particulier.
+Verre d’Eau Fraîche regroupe, en son sein, un ensemble de personnes qui adhèrent à venir en aide aux
+gens faibles de la société, en particulier les enfants malheureux, les veuves, les jeunes gens, les jeunes filles
+et les femmes en difficultés.
             </p>
         </div>
 
@@ -63,7 +69,8 @@
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 mb-4">Notre Mission</h3>
                 <p class="text-gray-600 leading-relaxed">
-                    Investir dans l’épanouissement, l’éducation et l’avenir des personnes les plus faibles et vulnérables de la société.
+                    Nous existons pour investir dans l’épanouissement, l’éducation ; et l’avenir des personnes les plus faibles et
+vulnérables de la société.
                 </p>
             </div>
 
@@ -77,7 +84,8 @@
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 mb-4">Notre Vision</h3>
                 <p class="text-gray-600 leading-relaxed">
-                    Devenir d’ici 2030 la meilleure organisation de jeunes agissant pour la transformation des conditions de vie des plus vulnérables.
+                    Nous rêvons d’être d’ici 2030 la meilleure organisation des jeunes qui agit pour la transformation des
+conditions des vies des personne les plus faibles et vulnérables de la société
                 </p>
             </div>
 
@@ -90,7 +98,7 @@
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 mb-4">Nos Valeurs</h3>
                 <p class="text-gray-600 leading-relaxed">
-                    Confiance, transparence, exigence et compassion au quotidien pour un impact réel et durable.
+                    Amour, Vertus, Engagement, Noblesse, Integrité, Respect, passion, agir, tolérance, loyauté, défendre, entraide, et intelligence.
                 </p>
             </div>
         </div>
@@ -153,7 +161,7 @@
                 <img src="{{ asset('Style1/images/ecole.jpg') }}" alt="Education" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 <div class="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-300"></div>
                 <div class="absolute bottom-0 left-0 p-6 text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                    <h3 class="text-xl font-bold mb-2">Éducation</h3>
+                    <h3 class="text-xl font-bold mb-2">Éducation pour tous</h3>
                     <p class="text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">Accès à l'éducation pour tous les enfants.</p>
                 </div>
             </div>
@@ -164,7 +172,7 @@
                 <div class="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-300"></div>
                 <div class="absolute bottom-0 left-0 p-8 text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                     <h3 class="text-2xl font-bold mb-2">Entrepreneuriat</h3>
-                    <p class="text-base opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">Encourager l'esprit d'initiative des jeunes.</p>
+                    <p class="text-base opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">Encourager l'esprit d'initiative à l'endroit des personnes vulnérables.</p>
                 </div>
             </div>
 
@@ -174,10 +182,38 @@
                 <div class="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-300"></div>
                 <div class="absolute bottom-0 left-0 p-6 text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                     <h3 class="text-xl font-bold mb-2">Santé</h3>
-                    <p class="text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">Des soins essentiels à proximité.</p>
+                    <p class="text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">Santé mentale et physique</p>
                 </div>
             </div>
         </div>
+    </div>
+</section>
+
+
+
+
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <<div class="text-center mb-16">
+            <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">PRINCIPAUX MOYENS D’ACTION</h2>
+            <div class="w-24 h-1 bg-blue-600 mx-auto mt-6 rounded-full"></div>
+        </div>
+
+     Fondée sur une Noblesse d’esprit et une Intégrité absolue, notre mission est de transformer l’Engagement en actes concrets pour le Respect de la dignité humaine. Nous agissons avec Amour au cœur des communautés les plus vulnérables, là où la Passion et l’Entraide deviennent des moteurs de changement.
+
+Notre action ne s'arrête pas au soutien moral : nous bâtissons l’avenir par l'Éducation, en prenant en charge la scolarité et les fournitures des enfants délaissés, et en offrant des formations professionnelles qui redonnent espoir et autonomie. De la santé mentale aux soins physiques urgents, de la lutte contre les violences basées sur le genre à la réinsertion sociale, chaque don de kit alimentaire ou de matériel est une pierre posée pour protéger les plus faibles. Guidés par l’Intelligence collective et une Tolérance infinie, nous parrainons des destins et organisons la solidarité pour que plus personne ne soit laissé au bord du chemin.
+<div class="space-y-6">
+           <p> 
+
+
+
+           </p>
+            <a href="{{ url('/#contact') }}" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-all transform hover:scale-105 shadow-lg">
+               Vous voulez en savoir plus ? Faîtes vous plaisir !
+                
+            </a>
+        </div>
+            </div>
     </div>
 </section>
 
@@ -243,7 +279,7 @@
                     </div>
                 </div>
                 <div class="relative h-64 lg:h-auto">
-                    <img src="{{ asset('Style1/images/autonomisationfemmes.jpg') }}" alt="Soutien" class="absolute inset-0 w-full h-full object-cover">
+                    <img src="{{ asset('Style1/images/enfantAide.jpg') }}" alt="Soutien" class="absolute inset-0 w-full h-full object-cover">
                     <div class="absolute inset-0 bg-blue-900/20"></div>
                 </div>
             </div>

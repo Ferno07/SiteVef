@@ -1,6 +1,5 @@
 <?php
 
-
 // app/Http/Controllers/ProjetController.php
 namespace App\Http\Controllers;
 
@@ -9,7 +8,7 @@ use App\Models\Projet;
 use App\Models\Messages;
 
 
-class ControllerAdmin extends Controller
+class AdminController extends Controller
 
 
 {
