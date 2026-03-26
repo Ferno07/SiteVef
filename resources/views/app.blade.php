@@ -8,7 +8,9 @@
     <meta name="description" content="Bienvenue sur le site VEF. Produits, services et témoignages.">
     
     <!-- Fonts -->
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -56,7 +58,7 @@
         <!-- Mobile menu -->
         <div x-show="mobileMenuOpen" class="lg:hidden" role="dialog" aria-modal="true" x-cloak>
             <div class="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm" @click="mobileMenuOpen = false"></div>
-            <div class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10 transition-transform duration-300 ease-in-out"
+            <div class="fixed right-0 top-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:ring-1 sm:ring-gray-900/10 transition-transform duration-300 ease-in-out"
                  x-transition:enter="transform transition ease-in-out duration-300"
                  x-transition:enter-start="translate-x-full"
                  x-transition:enter-end="translate-x-0"
