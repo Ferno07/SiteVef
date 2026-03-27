@@ -7,6 +7,7 @@ use App\Http\Controllers\ControllerCandidature;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PostController;
 
 Route::get('/test-route', function () {
     return 'OK';
@@ -21,6 +22,9 @@ Route::get('/rejoindre', function () {
     return view('rejoindre');
 })->name('rejoindre');
 
+
+// Route pour supprimer les projets dans la base
+Route::resource('posts', PostController::class);
 
 
 Route::post('/candidature', [ControllerCandidature::class, 'store'])->name('candidature.store');

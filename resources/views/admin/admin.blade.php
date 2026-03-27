@@ -131,7 +131,7 @@
               </div>
               <div class="form-group">
                 <label for="projet-description-longue">Description détaillée</label>
-                <textarea id="projet-description-longue" name="description-longue" rows="5" placeholder="Description complète du projet..."></textarea>
+                <textarea id="projet-description-longue" name="description_longue" rows="5" placeholder="Description complète du projet..."></textarea>
               </div>
               <div class="form-group">
                 <label for="projet-image">Image du projet</label>
@@ -163,6 +163,15 @@
                     <div class="project-info">
                         <h3>{{ $projet->titre }}</h3>
                         <p>{{ $projet->description }}</p>
+                        <p>{{ $projet->description_longue }}</p>
+
+                        <form action="{{ route('posts.destroy', $projet->id) }}" method="POST" class="inline">
+                      @csrf
+                      @method('DELETE')
+                      <button onclick="return confirm('Supprimer cet élément ?')" class="text-red-500">
+                           Supprimer
+                      </button>
+                  </form>
                     </div>
                 </div>
             @endforeach
