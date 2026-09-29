@@ -8,6 +8,7 @@ use App\Models\Messages;
 use App\Models\Candidature;
 use App\Models\Temoignage;
 use App\Models\Visite;
+use App\Models\Membre;
 use Carbon\Carbon;
 
 class AdminController extends Controller
@@ -18,6 +19,7 @@ class AdminController extends Controller
         $messages     = Messages::orderBy('created_at', 'desc')->get();
         $candidatures = Candidature::orderBy('created_at', 'desc')->get();
         $temoignages  = Temoignage::orderBy('created_at', 'desc')->get();
+        $membres      = Membre::orderBy('ordre')->orderBy('created_at')->get();
 
         // Statistiques visiteurs
         $today         = Carbon::today();
@@ -50,13 +52,14 @@ class AdminController extends Controller
             'messages_non_lus'    => $messages->where('lu', false)->count(),
             'candidatures'        => $candidatures->count(),
             'temoignages'         => $temoignages->count(),
+            'membres'             => $membres->count(),
             'visiteurs_jour'      => $visiteursAujourdhui,
             'visiteurs_mois'      => $visiteursMoisActuel,
             'visiteurs_mois_prec' => $visiteursMoisPrec,
             'evolution_visiteurs' => $evolutionVisiteurs,
         ];
 
-        return view('admin.admin', compact('projets', 'messages', 'candidatures', 'temoignages', 'stats', 'graphLabels', 'graphDonnees'));
+        return view('admin.admin', compact('projets', 'messages', 'candidatures', 'temoignages', 'membres', 'stats', 'graphLabels', 'graphDonnees'));
     }
 
     public function store(Request $request)

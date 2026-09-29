@@ -19,7 +19,8 @@
          data-aos="fade-up" data-aos-duration="900">
         <h1 class="text-3xl sm:text-5xl lg:text-7xl font-extrabold text-white tracking-tight leading-tight drop-shadow-lg">
             BIENVENUE À<br>
-            <span class="text-blue-400">VERRE D'EAU FRAÎCHE</span>
+            <span class="text-blue-400">VER
+                RE D'EAU FRAÎCHE</span>
         </h1>
         <p class="text-lg sm:text-xl md:text-2xl text-gray-200 font-light">
             "Agissons pour chacun, agissons pour tous."
@@ -432,7 +433,7 @@
                     <div>
                         <a href="{{ route('donation.index') }}"
                            class="inline-flex items-center justify-center px-8 py-4 text-base font-bold rounded-full text-blue-700 bg-white hover:bg-gray-50 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                            Donnez le sourire ❤️
+                            Donnez le sourire 
                         </a>
                     </div>
                 </div>

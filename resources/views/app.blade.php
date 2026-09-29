@@ -71,13 +71,14 @@
                 <a href="{{ url('/#about') }}"     class="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">À propos</a>
                 <a href="{{ url('/#services') }}"  class="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">Nos projets</a>
                 <a href="{{ url('/#contact') }}"   class="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">Contact</a>
+                <a href="{{ route('equipe') }}"     class="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">Notre Équipe</a>
                 <a href="{{ route('rejoindre') }}"  class="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">Nous rejoindre</a>
             </div>
 
             <div class="hidden lg:flex lg:flex-1 lg:justify-end">
                 <a href="{{ route('donation.index') }}"
                    class="rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 hover:shadow-lg hover:-translate-y-0.5 transition-all">
-                    Faire un don &rarr;
+                    Faire un don
                 </a>
             </div>
         </nav>
@@ -109,6 +110,7 @@
                             <a href="{{ url('/#about') }}"    @click="mobileMenuOpen = false" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50">À propos</a>
                             <a href="{{ url('/#services') }}" @click="mobileMenuOpen = false" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50">Nos projets</a>
                             <a href="{{ url('/#contact') }}"  @click="mobileMenuOpen = false" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50">Contact</a>
+                            <a href="{{ route('equipe') }}"   @click="mobileMenuOpen = false" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50">Notre Équipe</a>
                             <a href="{{ route('rejoindre') }}" @click="mobileMenuOpen = false" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50">Nous rejoindre</a>
                         </div>
                         <div class="py-6">
@@ -172,6 +174,7 @@
                                 <li><a href="{{ url('/#about') }}"     class="text-sm text-gray-300 hover:text-white transition-colors">À propos</a></li>
                                 <li><a href="{{ url('/#services') }}"  class="text-sm text-gray-300 hover:text-white transition-colors">Nos projets</a></li>
                                 <li><a href="{{ url('/#temoignages') }}" class="text-sm text-gray-300 hover:text-white transition-colors">Témoignages</a></li>
+                                <li><a href="{{ route('equipe') }}"     class="text-sm text-gray-300 hover:text-white transition-colors">Notre Équipe</a></li>
                                 <li><a href="{{ route('rejoindre') }}"  class="text-sm text-gray-300 hover:text-white transition-colors">Nous rejoindre</a></li>
                             </ul>
                         </div>

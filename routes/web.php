@@ -8,12 +8,15 @@ use App\Http\Controllers\DonationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TemoignageController;
+use App\Http\Controllers\MembreController;
 
 // ── Routes publiques ──────────────────────────────────────────────────────────
 
 Route::get('/', [ControllerAccueil::class, 'index'])->name('index');
 
 Route::get('/rejoindre', fn () => view('rejoindre'))->name('rejoindre');
+
+Route::get('/equipe', [ControllerAccueil::class, 'equipe'])->name('equipe');
 
 Route::post('/candidature', [ControllerCandidature::class, 'store'])->name('candidature.store');
 
@@ -59,6 +62,19 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/administrateur/temoignages/{id}/toggle', [TemoignageController::class, 'toggle'])
         ->name('admin.temoignages.toggle');
+
+    // Membres
+    Route::post('/administrateur/membres', [MembreController::class, 'store'])
+        ->name('admin.membres.store');
+
+    Route::put('/administrateur/membres/{id}', [MembreController::class, 'update'])
+        ->name('admin.membres.update');
+
+    Route::delete('/administrateur/membres/{id}', [MembreController::class, 'destroy'])
+        ->name('admin.membres.destroy');
+
+    Route::post('/administrateur/membres/{id}/toggle', [MembreController::class, 'toggle'])
+        ->name('admin.membres.toggle');
 
     // Profil utilisateur
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

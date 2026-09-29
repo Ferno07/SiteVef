@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Messages;
 use App\Models\Projet;
 use App\Models\Temoignage;
+use App\Models\Membre;
 use App\Mail\NouveauMessage;
 
 class ControllerAccueil extends Controller
@@ -17,6 +18,19 @@ class ControllerAccueil extends Controller
         $temoignages = Temoignage::where('actif', true)->orderBy('created_at', 'desc')->get();
 
         return view('index', compact('projets', 'temoignages'));
+    }
+
+    public function equipe()
+    {
+        $membres = Membre::where('actif', true)
+            ->orderBy('ordre')
+            ->orderBy('created_at')
+            ->get();
+
+        // Postes uniques pour les boutons filtres (triés alphabétiquement)
+        $postes = $membres->pluck('poste')->unique()->sort()->values();
+
+        return view('equipe', compact('membres', 'postes'));
     }
 
     public function message(Request $request)

@@ -88,6 +88,13 @@
                 <li><a href="#" class="nav-item" data-panel="projets">
                     <span class="nav-icon">📁</span><span>Projets en cours</span>
                 </a></li>
+                <li><a href="#" class="nav-item" data-panel="membres">
+                    <span class="nav-icon">👥</span>
+                    <span>Notre Équipe</span>
+                    @if($stats['membres'] > 0)
+                        <span class="badge-unread" style="background:#2563eb;">{{ $stats['membres'] }}</span>
+                    @endif
+                </a></li>
                 <li><a href="#" class="nav-item" data-panel="temoignages">
                     <span class="nav-icon">💬</span><span>Témoignages</span>
                 </a></li>
@@ -279,6 +286,151 @@
                         </div>
                     @endif
                 </div>
+            </div>
+        </div>
+
+        {{-- ── Membres ──────────────────────────────────────────────── --}}
+        <div class="admin-panel" id="membres">
+            <div class="panel-header">
+                <h1>Notre Équipe</h1>
+                <p>Gérer les membres affichés sur le site</p>
+            </div>
+            <div class="panel-content">
+
+                {{-- Formulaire d'ajout --}}
+                <div class="form-section">
+                    <h2>Ajouter un membre</h2>
+                    <form method="POST" action="{{ route('admin.membres.store') }}" enctype="multipart/form-data">
+                        @csrf
+
+                        <div class="grid" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                            <div class="form-group">
+                                <label for="m-prenom">Prénom <span class="required">*</span></label>
+                                <input type="text" id="m-prenom" name="prenom" required placeholder="Prénom du membre">
+                            </div>
+                            <div class="form-group">
+                                <label for="m-nom">Nom <span class="required">*</span></label>
+                                <input type="text" id="m-nom" name="nom" required placeholder="Nom du membre">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="m-poste">Poste / Rôle <span class="required">*</span></label>
+                            <input type="text" id="m-poste" name="poste" required placeholder="Ex : Présidente, Trésorier, Responsable terrain...">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="m-bio">Biographie courte</label>
+                            <textarea id="m-bio" name="bio" rows="3" maxlength="500"
+                                      placeholder="Quelques mots sur ce membre (max 500 caractères)..."></textarea>
+                        </div>
+
+                        <div class="grid" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                            <div class="form-group">
+                                <label for="m-photo">Photo de profil</label>
+                                <input type="file" id="m-photo" name="photo" accept="image/jpeg,image/png,image/webp">
+                                <p style="font-size:12px; color:#9ca3af; margin-top:4px;">JPG, PNG ou WebP — max 3 Mo</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="m-ordre">Ordre d'affichage</label>
+                                <input type="number" id="m-ordre" name="ordre" value="0" min="0"
+                                       placeholder="0 = premier affiché">
+                                <p style="font-size:12px; color:#9ca3af; margin-top:4px;">Les plus petits numéros apparaissent en premier</p>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Ajouter le membre</button>
+                            <button type="reset" class="btn btn-secondary">Réinitialiser</button>
+                        </div>
+                    </form>
+                </div>
+
+                <hr class="section-divider">
+
+                {{-- Liste des membres --}}
+                <div class="list-section">
+                    <h2>Membres enregistrés ({{ $membres->count() }})</h2>
+
+                    @if($membres->isEmpty())
+                        <p style="color:#9ca3af; font-size:14px;">Aucun membre pour le moment. Ajoutez le premier ci-dessus !</p>
+                    @else
+                        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:16px; margin-top:16px;">
+                            @foreach($membres as $m)
+                            <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:12px;">
+
+                                {{-- En-tête : photo + nom + poste --}}
+                                <div style="display:flex; align-items:center; gap:14px;">
+                                    @if($m->photo)
+                                        <img src="{{ asset($m->photo) }}" alt="{{ $m->nom_complet }}"
+                                             style="width:56px; height:56px; border-radius:50%; object-fit:cover; border:2px solid #e5e7eb; flex-shrink:0;">
+                                    @else
+                                        <div style="width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg,#2563eb,#1e40af); display:flex; align-items:center; justify-content:center; flex-shrink:0; border:2px solid #e5e7eb;">
+                                            <span style="color:#fff; font-weight:700; font-size:16px;">
+                                                {{ strtoupper(substr($m->prenom,0,1)) }}{{ strtoupper(substr($m->nom,0,1)) }}
+                                            </span>
+                                        </div>
+                                    @endif
+                                    <div style="min-width:0;">
+                                        <p style="font-weight:700; color:#111827; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                            {{ $m->prenom }} {{ $m->nom }}
+                                        </p>
+                                        <p style="color:#2563eb; font-size:13px; font-weight:600;">{{ $m->poste }}</p>
+                                        <div style="margin-top:4px;">
+                                            <span class="tag" style="{{ $m->actif ? 'background:#d1fae5;color:#065f46;' : 'background:#fee2e2;color:#991b1b;' }}">
+                                                {{ $m->actif ? 'Visible' : 'Masqué' }}
+                                            </span>
+                                            <span style="font-size:11px; color:#9ca3af; margin-left:6px;">Ordre : {{ $m->ordre }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Bio --}}
+                                @if($m->bio)
+                                <p style="font-size:13px; color:#6b7280; line-height:1.6; border-top:1px solid #e5e7eb; padding-top:10px;">
+                                    {{ Str::limit($m->bio, 120) }}
+                                </p>
+                                @endif
+
+                                {{-- Actions --}}
+                                <div style="display:flex; gap:8px; flex-wrap:wrap; border-top:1px solid #e5e7eb; padding-top:12px;">
+                                    <button onclick="openEditMembre(this)"
+                                            data-id="{{ $m->id }}"
+                                            data-prenom="{{ $m->prenom }}"
+                                            data-nom="{{ $m->nom }}"
+                                            data-poste="{{ $m->poste }}"
+                                            data-bio="{{ $m->bio ?? '' }}"
+                                            data-ordre="{{ $m->ordre }}"
+                                            class="btn btn-secondary" style="font-size:12px; padding:5px 14px; flex:1;">
+                                        ✏️ Modifier
+                                    </button>
+
+                                    <form method="POST" action="{{ route('admin.membres.toggle', $m->id) }}" style="flex:1;">
+                                        @csrf
+                                        <button type="submit" class="btn btn-secondary"
+                                                style="font-size:12px; padding:5px 14px; width:100%; {{ $m->actif ? 'color:#d97706;border-color:#fde68a;background:#fffbeb;' : 'color:#059669;border-color:#6ee7b7;background:#ecfdf5;' }}">
+                                            {{ $m->actif ? '🙈 Masquer' : '👁 Afficher' }}
+                                        </button>
+                                    </form>
+
+                                    <form method="POST" action="{{ route('admin.membres.destroy', $m->id) }}"
+                                          onsubmit="return confirm('Supprimer {{ $m->prenom }} {{ $m->nom }} définitivement ?')"
+                                          style="flex:0 0 auto;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-secondary"
+                                                style="font-size:12px; padding:5px 12px; color:#ef4444; border-color:#fca5a5; background:#fef2f2;">
+                                            🗑
+                                        </button>
+                                    </form>
+                                </div>
+
+                            </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
             </div>
         </div>
 
@@ -491,6 +643,66 @@
     </main>
 </div>
 
+{{-- ── Modal modification membre ─────────────────────────────────────── --}}
+<div id="modal-edit-membre"
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:1100; align-items:center; justify-content:center; padding:16px;">
+    <div style="background:#fff; border-radius:16px; max-width:540px; width:100%; max-height:90vh; overflow-y:auto; padding:32px; position:relative; box-shadow:0 20px 60px rgba(0,0,0,.2);">
+
+        <button onclick="closeEditMembre()"
+                style="position:absolute; top:16px; right:16px; background:#f3f4f6; border:none; border-radius:50%; width:34px; height:34px; font-size:18px; cursor:pointer; color:#6b7280; display:flex; align-items:center; justify-content:center;">
+            ×
+        </button>
+
+        <h2 style="margin:0 0 24px; font-size:18px; font-weight:700; color:#111827;">
+            ✏️ Modifier le membre
+        </h2>
+
+        <form id="form-edit-membre" method="POST" action="" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="edit-prenom">Prénom <span class="required">*</span></label>
+                    <input type="text" id="edit-prenom" name="prenom" required>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="edit-nom">Nom <span class="required">*</span></label>
+                    <input type="text" id="edit-nom" name="nom" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="edit-poste">Poste / Rôle <span class="required">*</span></label>
+                <input type="text" id="edit-poste" name="poste" required>
+            </div>
+
+            <div class="form-group">
+                <label for="edit-bio">Biographie courte</label>
+                <textarea id="edit-bio" name="bio" rows="3" maxlength="500"></textarea>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="edit-photo">Nouvelle photo
+                        <small style="color:#9ca3af; font-weight:400;">(laisser vide = garder l'actuelle)</small>
+                    </label>
+                    <input type="file" id="edit-photo" name="photo" accept="image/jpeg,image/png,image/webp">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="edit-ordre">Ordre d'affichage</label>
+                    <input type="number" id="edit-ordre" name="ordre" min="0">
+                </div>
+            </div>
+
+            <div class="form-actions" style="margin-top:24px; padding-top:20px; border-top:1px solid #e5e7eb;">
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <button type="button" onclick="closeEditMembre()" class="btn btn-secondary">Annuler</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 {{-- ── Modal détail candidature ──────────────────────────────────────── --}}
 <div id="candidature-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1000; align-items:center; justify-content:center;">
     <div style="background:#fff; border-radius:16px; max-width:600px; width:90%; max-height:85vh; overflow-y:auto; padding:32px; position:relative;">
@@ -612,6 +824,46 @@ function showCandidatureDetail(btn) {
 // Fermer modal en cliquant à l'extérieur
 document.getElementById('candidature-modal').addEventListener('click', function(e) {
     if (e.target === this) this.style.display = 'none';
+});
+
+// ── Modal modification membre ────────────────────────────────────────
+function openEditMembre(btn) {
+    const id = btn.dataset.id;
+
+    // Remplir les champs avec les données actuelles du membre
+    document.getElementById('edit-prenom').value = btn.dataset.prenom || '';
+    document.getElementById('edit-nom').value    = btn.dataset.nom    || '';
+    document.getElementById('edit-poste').value  = btn.dataset.poste  || '';
+    document.getElementById('edit-bio').value    = btn.dataset.bio    || '';
+    document.getElementById('edit-ordre').value  = btn.dataset.ordre  || '0';
+
+    // Réinitialiser le champ photo (ne peut pas être prérempli pour raisons de sécurité)
+    document.getElementById('edit-photo').value  = '';
+
+    // Mettre à jour l'action du formulaire avec l'ID correct
+    document.getElementById('form-edit-membre').action = '/administrateur/membres/' + id;
+
+    // Afficher la modal
+    document.getElementById('modal-edit-membre').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeEditMembre() {
+    document.getElementById('modal-edit-membre').style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+// Fermer la modal membre en cliquant sur le fond
+document.getElementById('modal-edit-membre').addEventListener('click', function(e) {
+    if (e.target === this) closeEditMembre();
+});
+
+// Fermer avec la touche Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeEditMembre();
+        document.getElementById('candidature-modal').style.display = 'none';
+    }
 });
 
 // ── Graphique visiteurs ──────────────────────────────────────────────
