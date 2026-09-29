@@ -10,7 +10,7 @@
 {{-- ═══════════════════════════════════════════════════════════════════════ --}}
 <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0 z-0">
-        <img src="{{ asset('Style1/images/better.jpg') }}" alt="Enfants aidés par VEF"
+        <img src="{{ asset('Style1/images/VEF.jpeg') }}" alt="Enfants aidés par VEF"
              class="w-full h-full object-cover object-center">
         <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-gray-900/90"></div>
     </div>
@@ -163,12 +163,21 @@
                          data-description="{{ $projet->description }}"
                          data-longue="{{ $projet->description_longue }}"
                          data-image="{{ asset($projet->image) }}"
+                         data-images="{{ json_encode($projet->galerie) }}"
                          class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col flex-shrink-0 cursor-pointer group"
                          style="width: clamp(260px, 80vw, 340px);">
                     <div class="relative h-52 overflow-hidden">
                         <img src="{{ asset($projet->image) }}" alt="{{ $projet->titre }}"
                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                        @if($projet->images->count() > 1)
+                        <div class="absolute top-3 left-3 bg-black/60 rounded-full px-3 py-1 text-xs font-semibold text-white flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 8h.01M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z"/>
+                            </svg>
+                            {{ $projet->images->count() }}
+                        </div>
+                        @endif
                         <div class="absolute bottom-3 right-3 bg-white/90 rounded-full px-3 py-1 text-xs font-semibold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
                             Voir les détails
                         </div>
@@ -187,12 +196,21 @@
                          data-description="{{ $projet->description }}"
                          data-longue="{{ $projet->description_longue }}"
                          data-image="{{ asset($projet->image) }}"
+                         data-images="{{ json_encode($projet->galerie) }}"
                          class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col flex-shrink-0 cursor-pointer group"
                          style="width: clamp(260px, 80vw, 340px);" aria-hidden="true">
                     <div class="relative h-52 overflow-hidden">
                         <img src="{{ asset($projet->image) }}" alt="{{ $projet->titre }}"
                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                        @if($projet->images->count() > 1)
+                        <div class="absolute top-3 left-3 bg-black/60 rounded-full px-3 py-1 text-xs font-semibold text-white flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 8h.01M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z"/>
+                            </svg>
+                            {{ $projet->images->count() }}
+                        </div>
+                        @endif
                         <div class="absolute bottom-3 right-3 bg-white/90 rounded-full px-3 py-1 text-xs font-semibold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
                             Voir les détails
                         </div>
@@ -583,6 +601,18 @@
         <div style="position:relative; height:260px; overflow:hidden; border-radius:20px 20px 0 0;">
             <img id="modal-projet-img" src="" alt="" style="width:100%; height:100%; object-fit:cover;">
             <div style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,.5), transparent);"></div>
+            <!-- Navigation galerie -->
+            <div id="modal-projet-nav" style="display:none;">
+                <button onclick="event.stopPropagation(); projetPrevImage()"
+                        style="position:absolute; top:50%; left:10px; transform:translateY(-50%); background:rgba(255,255,255,.85); border:none; border-radius:50%; width:34px; height:34px; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,.2);">
+                    ‹
+                </button>
+                <button onclick="event.stopPropagation(); projetNextImage()"
+                        style="position:absolute; top:50%; right:10px; transform:translateY(-50%); background:rgba(255,255,255,.85); border:none; border-radius:50%; width:34px; height:34px; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,.2);">
+                    ›
+                </button>
+                <div id="modal-projet-dots" style="position:absolute; bottom:56px; left:50%; transform:translateX(-50%); display:flex; gap:6px;"></div>
+            </div>
             <!-- Titre sur l'image -->
             <h2 id="modal-projet-titre"
                 style="position:absolute; bottom:20px; left:24px; right:60px; color:#fff; font-size:22px; font-weight:800; margin:0; line-height:1.3;"></h2>
@@ -631,8 +661,19 @@
 })();
 
 // ── Modale projet ─────────────────────────────────────────────────────────────
+let projetImages     = [];
+let projetImageIndex = 0;
+
 function openProjet(card) {
-    document.getElementById('modal-projet-img').src         = card.dataset.image;
+    try {
+        projetImages = JSON.parse(card.dataset.images || '[]');
+    } catch (e) {
+        projetImages = [];
+    }
+    if (!projetImages.length) projetImages = [card.dataset.image];
+    projetImageIndex = 0;
+    renderProjetImage();
+
     document.getElementById('modal-projet-titre').textContent    = card.dataset.titre;
     document.getElementById('modal-projet-desc').textContent     = card.dataset.description;
     document.getElementById('modal-projet-longue').textContent   = card.dataset.longue || '';
@@ -640,11 +681,45 @@ function openProjet(card) {
     document.getElementById('modal-projet').style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
+
+function renderProjetImage() {
+    document.getElementById('modal-projet-img').src = projetImages[projetImageIndex];
+
+    const nav = document.getElementById('modal-projet-nav');
+    nav.style.display = projetImages.length > 1 ? 'block' : 'none';
+
+    const dots = document.getElementById('modal-projet-dots');
+    dots.innerHTML = '';
+    if (projetImages.length > 1) {
+        projetImages.forEach((_, i) => {
+            const dot = document.createElement('span');
+            dot.style.cssText = 'width:7px; height:7px; border-radius:50%; cursor:pointer; background:'
+                + (i === projetImageIndex ? '#fff' : 'rgba(255,255,255,.5)') + ';';
+            dot.onclick = (e) => { e.stopPropagation(); projetImageIndex = i; renderProjetImage(); };
+            dots.appendChild(dot);
+        });
+    }
+}
+
+function projetPrevImage() {
+    projetImageIndex = (projetImageIndex - 1 + projetImages.length) % projetImages.length;
+    renderProjetImage();
+}
+
+function projetNextImage() {
+    projetImageIndex = (projetImageIndex + 1) % projetImages.length;
+    renderProjetImage();
+}
 function closeProjet() {
     document.getElementById('modal-projet').style.display = 'none';
     document.body.style.overflow = '';
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeProjet(); });
+document.addEventListener('keydown', e => {
+    if (document.getElementById('modal-projet').style.display !== 'flex') return;
+    if (e.key === 'Escape')     closeProjet();
+    if (e.key === 'ArrowLeft')  projetPrevImage();
+    if (e.key === 'ArrowRight') projetNextImage();
+});
 
 // ── Carousel témoignages (JS vanilla) ────────────────────────────────────────
 (function () {

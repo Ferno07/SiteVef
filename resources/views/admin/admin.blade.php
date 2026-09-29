@@ -245,8 +245,9 @@
                             <textarea id="projet-description-longue" name="description_longue" rows="5" placeholder="Description complète du projet..."></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="projet-image">Image du projet</label>
-                            <input type="file" id="projet-image" name="image" accept="image/*">
+                            <label for="projet-images">Photos du projet</label>
+                            <input type="file" id="projet-images" name="images[]" accept="image/*" multiple>
+                            <p style="font-size:12px; color:#9ca3af; margin-top:4px;">Vous pouvez sélectionner plusieurs photos (la première sera utilisée comme photo de couverture).</p>
                             <div class="image-preview" id="projet-image-preview"></div>
                         </div>
                         <div class="form-actions">
@@ -266,20 +267,38 @@
                         <div class="existing-projects">
                             @foreach($projets as $projet)
                             <div class="project-item">
-                                <img src="{{ asset($projet->image) }}" alt="{{ $projet->titre }}"
-                                     class="project-thumb" style="width:120px; height:80px; object-fit:cover; border-radius:8px;">
+                                <div style="position:relative; flex-shrink:0;">
+                                    <img src="{{ asset($projet->image) }}" alt="{{ $projet->titre }}"
+                                         class="project-thumb" style="width:120px; height:80px; object-fit:cover; border-radius:8px;">
+                                    @if($projet->images->count() > 1)
+                                        <span style="position:absolute; bottom:4px; right:4px; background:rgba(0,0,0,.65); color:#fff; font-size:11px; padding:2px 6px; border-radius:999px;">
+                                            +{{ $projet->images->count() - 1 }}
+                                        </span>
+                                    @endif
+                                </div>
                                 <div class="project-info" style="flex:1;">
                                     <h3>{{ $projet->titre }}</h3>
                                     <p style="color:#6b7280; font-size:13px;">{{ $projet->description }}</p>
                                     <p style="color:#9ca3af; font-size:12px; margin-top:4px;">Ajouté le {{ $projet->created_at->format('d/m/Y') }}</p>
-                                    <form action="{{ route('posts.destroy', $projet->id) }}" method="POST" style="margin-top:8px;"
-                                          onsubmit="return confirm('Supprimer ce projet définitivement ?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-secondary" style="color:#ef4444; border-color:#fca5a5; background:#fef2f2; font-size:12px; padding:4px 12px;">
-                                            Supprimer
+                                    <div style="display:flex; gap:8px; margin-top:8px;">
+                                        <button type="button" onclick="openEditProjet(this)"
+                                                data-id="{{ $projet->id }}"
+                                                data-titre="{{ $projet->titre }}"
+                                                data-description="{{ $projet->description }}"
+                                                data-longue="{{ $projet->description_longue }}"
+                                                data-images="{{ $projet->images->map(fn ($img) => ['id' => $img->id, 'url' => asset($img->chemin)])->toJson() }}"
+                                                class="btn btn-secondary" style="font-size:12px; padding:4px 12px;">
+                                            ✏️ Modifier
                                         </button>
-                                    </form>
+                                        <form action="{{ route('posts.destroy', $projet->id) }}" method="POST"
+                                              onsubmit="return confirm('Supprimer ce projet définitivement ?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-secondary" style="color:#ef4444; border-color:#fca5a5; background:#fef2f2; font-size:12px; padding:4px 12px;">
+                                                Supprimer
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                             @endforeach
@@ -643,6 +662,58 @@
     </main>
 </div>
 
+{{-- ── Modal modification projet ─────────────────────────────────────── --}}
+<div id="modal-edit-projet"
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:1100; align-items:center; justify-content:center; padding:16px;">
+    <div style="background:#fff; border-radius:16px; max-width:600px; width:100%; max-height:90vh; overflow-y:auto; padding:32px; position:relative; box-shadow:0 20px 60px rgba(0,0,0,.2);">
+
+        <button onclick="closeEditProjet()"
+                style="position:absolute; top:16px; right:16px; background:#f3f4f6; border:none; border-radius:50%; width:34px; height:34px; font-size:18px; cursor:pointer; color:#6b7280; display:flex; align-items:center; justify-content:center;">
+            ×
+        </button>
+
+        <h2 style="margin:0 0 24px; font-size:18px; font-weight:700; color:#111827;">
+            ✏️ Modifier le projet
+        </h2>
+
+        <form id="form-edit-projet" method="POST" action="" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+
+            <div class="form-group">
+                <label for="edit-projet-titre">Titre du projet <span class="required">*</span></label>
+                <input type="text" id="edit-projet-titre" name="titre" required>
+            </div>
+
+            <div class="form-group">
+                <label for="edit-projet-description">Description courte</label>
+                <input type="text" id="edit-projet-description" name="description">
+            </div>
+
+            <div class="form-group">
+                <label for="edit-projet-description-longue">Description détaillée</label>
+                <textarea id="edit-projet-description-longue" name="description_longue" rows="5"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Photos actuelles</label>
+                <div id="edit-projet-images-actuelles" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:6px;"></div>
+                <p style="font-size:12px; color:#9ca3af; margin-top:6px;">Cochez une photo pour la supprimer à l'enregistrement.</p>
+            </div>
+
+            <div class="form-group">
+                <label for="edit-projet-images">Ajouter des photos</label>
+                <input type="file" id="edit-projet-images" name="images[]" accept="image/*" multiple>
+            </div>
+
+            <div class="form-actions" style="margin-top:24px; padding-top:20px; border-top:1px solid #e5e7eb;">
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <button type="button" onclick="closeEditProjet()" class="btn btn-secondary">Annuler</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 {{-- ── Modal modification membre ─────────────────────────────────────── --}}
 <div id="modal-edit-membre"
      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:1100; align-items:center; justify-content:center; padding:16px;">
@@ -826,6 +897,51 @@ document.getElementById('candidature-modal').addEventListener('click', function(
     if (e.target === this) this.style.display = 'none';
 });
 
+// ── Modal modification projet ────────────────────────────────────────
+function openEditProjet(btn) {
+    const id = btn.dataset.id;
+
+    document.getElementById('edit-projet-titre').value              = btn.dataset.titre       || '';
+    document.getElementById('edit-projet-description').value        = btn.dataset.description || '';
+    document.getElementById('edit-projet-description-longue').value = btn.dataset.longue       || '';
+    document.getElementById('edit-projet-images').value              = '';
+
+    let images = [];
+    try { images = JSON.parse(btn.dataset.images || '[]'); } catch (e) { images = []; }
+
+    const container = document.getElementById('edit-projet-images-actuelles');
+    container.innerHTML = '';
+    if (!images.length) {
+        container.innerHTML = '<p style="color:#9ca3af; font-size:13px;">Aucune photo pour ce projet.</p>';
+    } else {
+        images.forEach(img => {
+            const label = document.createElement('label');
+            label.style.cssText = 'position:relative; cursor:pointer; display:block;';
+            label.innerHTML = `
+                <img src="${img.url}" style="width:90px; height:70px; object-fit:cover; border-radius:8px; display:block; border:2px solid transparent;">
+                <input type="checkbox" name="supprimer_images[]" value="${img.id}"
+                       style="position:absolute; top:4px; right:4px; width:16px; height:16px; accent-color:#ef4444;">
+            `;
+            container.appendChild(label);
+        });
+    }
+
+    document.getElementById('form-edit-projet').action = '/administrateur/projet/' + id;
+
+    document.getElementById('modal-edit-projet').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeEditProjet() {
+    document.getElementById('modal-edit-projet').style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+// Fermer la modal projet en cliquant sur le fond
+document.getElementById('modal-edit-projet').addEventListener('click', function(e) {
+    if (e.target === this) closeEditProjet();
+});
+
 // ── Modal modification membre ────────────────────────────────────────
 function openEditMembre(btn) {
     const id = btn.dataset.id;
@@ -862,6 +978,7 @@ document.getElementById('modal-edit-membre').addEventListener('click', function(
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeEditMembre();
+        closeEditProjet();
         document.getElementById('candidature-modal').style.display = 'none';
     }
 });

@@ -15,7 +15,16 @@ class AdminController extends Controller
 {
     public function index()
     {
-        $projets      = Projet::all();
+        $projets      = Projet::with('images')->get();
+
+        // Migration douce : les projets créés avant la galerie multi-photos
+        // n'ont qu'une image (colonne `image`) sans ligne dans `projet_images`.
+        $projets->each(function (Projet $projet) {
+            if ($projet->images->isEmpty() && $projet->image) {
+                $projet->images()->create(['chemin' => $projet->image, 'ordre' => 0]);
+                $projet->load('images');
+            }
+        });
         $messages     = Messages::orderBy('created_at', 'desc')->get();
         $candidatures = Candidature::orderBy('created_at', 'desc')->get();
         $temoignages  = Temoignage::orderBy('created_at', 'desc')->get();
@@ -68,7 +77,8 @@ class AdminController extends Controller
             'titre'             => 'required|string|max:255',
             'description'       => 'nullable|string',
             'description_longue'=> 'nullable|string',
-            'image'             => 'nullable|image|max:2048',
+            'images'            => 'nullable|array',
+            'images.*'          => 'image|max:2048',
         ]);
 
         $projet = new Projet();
@@ -76,16 +86,75 @@ class AdminController extends Controller
         $projet->description       = $request->description;
         $projet->description_longue = $request->description_longue;
 
-        if ($request->hasFile('image')) {
-            $file     = $request->file('image');
+        $chemins = [];
+        foreach ($request->file('images', []) as $file) {
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('Style1/imagesProjets'), $filename);
-            $projet->image = 'Style1/imagesProjets/' . $filename;
+            $chemins[] = 'Style1/imagesProjets/' . $filename;
+        }
+
+        if (!empty($chemins)) {
+            $projet->image = $chemins[0];
         }
 
         $projet->save();
 
+        foreach ($chemins as $ordre => $chemin) {
+            $projet->images()->create([
+                'chemin' => $chemin,
+                'ordre'  => $ordre,
+            ]);
+        }
+
         return redirect()->route('admin.projets.index')->with('success', 'Projet ajouté avec succès !');
+    }
+
+    public function update(Request $request, int $id)
+    {
+        $projet = Projet::with('images')->findOrFail($id);
+
+        $request->validate([
+            'titre'               => 'required|string|max:255',
+            'description'         => 'nullable|string',
+            'description_longue'  => 'nullable|string',
+            'images'              => 'nullable|array',
+            'images.*'            => 'image|max:2048',
+            'supprimer_images'    => 'nullable|array',
+            'supprimer_images.*'  => 'integer|exists:projet_images,id',
+        ]);
+
+        $projet->titre              = $request->titre;
+        $projet->description        = $request->description;
+        $projet->description_longue = $request->description_longue;
+
+        // Retirer les photos décochées
+        foreach ($request->input('supprimer_images', []) as $imageId) {
+            $image = $projet->images->firstWhere('id', $imageId);
+            if ($image) {
+                if (file_exists(public_path($image->chemin))) {
+                    unlink(public_path($image->chemin));
+                }
+                $image->delete();
+            }
+        }
+
+        // Ajouter les nouvelles photos
+        $ordre = (int) $projet->images()->max('ordre');
+        foreach ($request->file('images', []) as $file) {
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('Style1/imagesProjets'), $filename);
+            $ordre++;
+            $projet->images()->create([
+                'chemin' => 'Style1/imagesProjets/' . $filename,
+                'ordre'  => $ordre,
+            ]);
+        }
+
+        // La couverture (utilisée sur la carte projet) suit la première photo de la galerie
+        $projet->image = optional($projet->images()->orderBy('ordre')->first())->chemin;
+        $projet->save();
+
+        return redirect()->route('admin.projets.index')->with('success', 'Projet modifié avec succès !');
     }
 
     public function destroy(int $id)
