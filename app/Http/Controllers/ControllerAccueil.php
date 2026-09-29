@@ -14,7 +14,7 @@ class ControllerAccueil extends Controller
 {
     public function index()
     {
-        $projets     = Projet::all();
+        $projets     = Projet::with('images')->get();
         $temoignages = Temoignage::where('actif', true)->orderBy('created_at', 'desc')->get();
 
         return view('index', compact('projets', 'temoignages'));

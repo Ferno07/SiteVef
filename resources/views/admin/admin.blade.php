@@ -245,8 +245,9 @@
                             <textarea id="projet-description-longue" name="description_longue" rows="5" placeholder="Description complète du projet..."></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="projet-image">Image du projet</label>
-                            <input type="file" id="projet-image" name="image" accept="image/*">
+                            <label for="projet-images">Photos du projet</label>
+                            <input type="file" id="projet-images" name="images[]" accept="image/*" multiple>
+                            <p style="font-size:12px; color:#9ca3af; margin-top:4px;">Vous pouvez sélectionner plusieurs photos (la première sera utilisée comme photo de couverture).</p>
                             <div class="image-preview" id="projet-image-preview"></div>
                         </div>
                         <div class="form-actions">
@@ -266,8 +267,15 @@
                         <div class="existing-projects">
                             @foreach($projets as $projet)
                             <div class="project-item">
-                                <img src="{{ asset($projet->image) }}" alt="{{ $projet->titre }}"
-                                     class="project-thumb" style="width:120px; height:80px; object-fit:cover; border-radius:8px;">
+                                <div style="position:relative; flex-shrink:0;">
+                                    <img src="{{ asset($projet->image) }}" alt="{{ $projet->titre }}"
+                                         class="project-thumb" style="width:120px; height:80px; object-fit:cover; border-radius:8px;">
+                                    @if($projet->images->count() > 1)
+                                        <span style="position:absolute; bottom:4px; right:4px; background:rgba(0,0,0,.65); color:#fff; font-size:11px; padding:2px 6px; border-radius:999px;">
+                                            +{{ $projet->images->count() - 1 }}
+                                        </span>
+                                    @endif
+                                </div>
                                 <div class="project-info" style="flex:1;">
                                     <h3>{{ $projet->titre }}</h3>
                                     <p style="color:#6b7280; font-size:13px;">{{ $projet->description }}</p>

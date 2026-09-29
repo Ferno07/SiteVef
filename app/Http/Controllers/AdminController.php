@@ -15,7 +15,7 @@ class AdminController extends Controller
 {
     public function index()
     {
-        $projets      = Projet::all();
+        $projets      = Projet::with('images')->get();
         $messages     = Messages::orderBy('created_at', 'desc')->get();
         $candidatures = Candidature::orderBy('created_at', 'desc')->get();
         $temoignages  = Temoignage::orderBy('created_at', 'desc')->get();
@@ -68,7 +68,8 @@ class AdminController extends Controller
             'titre'             => 'required|string|max:255',
             'description'       => 'nullable|string',
             'description_longue'=> 'nullable|string',
-            'image'             => 'nullable|image|max:2048',
+            'images'            => 'nullable|array',
+            'images.*'          => 'image|max:2048',
         ]);
 
         $projet = new Projet();
@@ -76,14 +77,25 @@ class AdminController extends Controller
         $projet->description       = $request->description;
         $projet->description_longue = $request->description_longue;
 
-        if ($request->hasFile('image')) {
-            $file     = $request->file('image');
+        $chemins = [];
+        foreach ($request->file('images', []) as $file) {
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('Style1/imagesProjets'), $filename);
-            $projet->image = 'Style1/imagesProjets/' . $filename;
+            $chemins[] = 'Style1/imagesProjets/' . $filename;
+        }
+
+        if (!empty($chemins)) {
+            $projet->image = $chemins[0];
         }
 
         $projet->save();
+
+        foreach ($chemins as $ordre => $chemin) {
+            $projet->images()->create([
+                'chemin' => $chemin,
+                'ordre'  => $ordre,
+            ]);
+        }
 
         return redirect()->route('admin.projets.index')->with('success', 'Projet ajouté avec succès !');
     }
