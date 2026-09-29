@@ -1,0 +1,80 @@
+clear()
+
+function j=I(i)
+     j = i+1;
+endfunction
+
+function y=TFD1(N)
+    omegaN = exp((2*%i*%pi)/N);
+    OMEGAN = zeros(N,N);
+    for n=0:N-1
+        for k=0:N-1
+             OMEGAN(I(n),I(k)) =(omegaN)^(n*k);
+        end 
+    end 
+    y=conj(OMEGAN)/N;  
+endfunction
+//N=10;
+
+function y=TFD2(N)
+    const=sqrt((2*%pi)/N)*exp(%i*%pi/4);
+    w=const*[0:N-1]
+    x=w.'*w
+    x1=exp(x)
+    y=conj(x1)/N;
+    //y=const^2*w*w'
+    
+//    omegaN=zeros(N,1)
+ //   for n=0:N-1
+    //    omegaN(I(n),1)=const*n
+//    end
+//   for n=0:N-1
+//        for n2=0:N-1
+ //            OMEGAN(I(n),I(n2)) =omegaN(I(n),1)*const*n2;
+//        end
+//    end
+//    y=OMEGAN;
+endfunction
+
+//2 Signal et Débruitage d'un signal
+function q = f(x)
+    f0 = 50;
+    f1 = 120;
+    q = sin(2*%pi*f0*x) + sin(2*%pi*f1*x);
+endfunction
+
+t = linspace(0, 1, 1000); // 1000 échantillons entre 0 et 1 seconde
+
+y = f(t);
+
+
+fhat = fft(y);
+
+//disp(fhat);
+
+
+N=1000
+T=1
+
+//7-b
+freq=(0:N-1) ;//abscisse des frequences
+L=1:floor(N/2) ;//on conserve seulement la moitie des frequences
+//scf()
+//plot(freq(L),abs(fhat(L))) //abs permet de calculer le module d'un nombre complexe
+
+funclean = y + 2.5*rand(t,"normal")
+//plot(t,funclean)
+
+funcleanhat=fft(funclean)
+
+subplot(2,1,1) 
+plot(freq(L),abs(fhat(L)))
+
+subplot(2,1,2) 
+plot(freq(L),abs(funclean(L)))
+
+       
+        
+                    
+    
+  

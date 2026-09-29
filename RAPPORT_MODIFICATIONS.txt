@@ -1,0 +1,444 @@
+================================================================================
+       RAPPORT DES MODIFICATIONS — SITE VERRE D'EAU FRAÎCHE
+       Date : 02/07/2026
+================================================================================
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. NOUVEAUX FICHIERS CRÉÉS (7 fichiers)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 1. app/Models/Temoignage.php                                                │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Modèle Eloquent pour la gestion des témoignages.                            │
+│ Champs fillable : auteur, role, texte, actif                                │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 2. database/migrations/2026_07_02_..._create_temoignages_table.php          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Crée la table "temoignages" en base de données avec les colonnes :          │
+│   - id (auto-increment)                                                     │
+│   - auteur (string, obligatoire)                                            │
+│   - role (string, optionnel) — ex : Bénévole, Partenaire, Bénéficiaire     │
+│   - texte (text, obligatoire) — le contenu du témoignage                   │
+│   - actif (boolean, défaut: true) — pour masquer/afficher sur le site      │
+│   - created_at / updated_at (timestamps)                                    │
+│                                                                             │
+│ STATUT : Migration exécutée avec succès.                                    │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 3. app/Mail/NouveauMessage.php                                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Classe Laravel Mail déclenchée automatiquement quand un visiteur            │
+│ envoie un message via le formulaire de contact.                             │
+│                                                                             │
+│ Comportement :                                                              │
+│   - Expéditeur : adresse configurée dans .env (MAIL_FROM_ADDRESS)          │
+│   - Destinataire : fernandtovignonnou@gmail.com                             │
+│   - Reply-To : l'email du visiteur (pour répondre directement)             │
+│   - Objet : "[VEF] Nouveau message : {objet du message}"                   │
+│   - Corps : template HTML emails/nouveau_message.blade.php                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 4. app/Mail/NouvelleCandidature.php                                         │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Classe Laravel Mail déclenchée automatiquement quand quelqu'un soumet       │
+│ le formulaire de candidature (bénévole, stagiaire, autre).                  │
+│                                                                             │
+│ Comportement :                                                              │
+│   - Expéditeur : adresse configurée dans .env                               │
+│   - Destinataire : fernandtovignonnou@gmail.com                             │
+│   - Reply-To : l'email du candidat                                          │
+│   - Objet : "[VEF] Nouvelle candidature : {Prénom Nom}"                    │
+│   - Corps : template HTML emails/nouvelle_candidature.blade.php             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 5. resources/views/emails/nouveau_message.blade.php                         │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Template HTML de l'email de notification pour un nouveau message.           │
+│ Contient : nom/prénom, email cliquable, objet, message complet,             │
+│ un bouton "Voir dans le dashboard admin", pied de page avec le nom du site. │
+│ Design : professionnel, fond bleu #2563eb, police Arial.                    │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 6. resources/views/emails/nouvelle_candidature.blade.php                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Template HTML de l'email de notification pour une nouvelle candidature.     │
+│ Contient : nom, email, téléphone, date de naissance, adresse, type de      │
+│ participation (badge coloré), préférence d'action, disponibilités,          │
+│ lettre de motivation complète, bouton "Voir dans le dashboard".             │
+│ Design : fond bleu marine #1e3a8a.                                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 7. app/Http/Controllers/TemoignageController.php                            │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Nouveau contrôleur pour gérer les témoignages depuis l'admin.               │
+│                                                                             │
+│ Méthodes :                                                                  │
+│   - store()   → valide et crée un témoignage (auteur, rôle, texte)         │
+│   - destroy() → supprime un témoignage par son ID                          │
+│   - toggle()  → bascule la visibilité (actif/masqué) sur le site           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. FICHIERS MODIFIÉS (8 fichiers)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+── BACKEND ──────────────────────────────────────────────────────────────────
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ app/Http/Controllers/AdminController.php                                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ CORRECTIONS :                                                               │
+│   [BUG CRITIQUE] toggleRead() utilisait "Message::findOrFail()" au lieu    │
+│   de "Messages::findOrFail()" — classe inexistante, provoquait une erreur  │
+│   500. Corrigé.                                                             │
+│                                                                             │
+│ AMÉLIORATIONS :                                                             │
+│   - index() charge maintenant : projets, messages, candidatures,            │
+│     témoignages, et calcule des stats réelles :                             │
+│       * Nombre total de projets                                             │
+│       * Nombre total de messages + nombre de non lus                       │
+│       * Nombre total de candidatures                                        │
+│       * Nombre total de témoignages                                        │
+│   - destroy() : type hint int ajouté sur $id                                │
+│   - toggleRead() : type hint int ajouté sur $id                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ app/Http/Controllers/ControllerAccueil.php                                  │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ AJOUT :                                                                     │
+│   Après la sauvegarde d'un message de contact, envoi automatique d'un      │
+│   email de notification à fernandtovignonnou@gmail.com via la classe        │
+│   Mail NouveauMessage.                                                      │
+│                                                                             │
+│   Le champ "lu" est maintenant explicitement initialisé à false lors        │
+│   de la création (pour le suivi lu/non lu dans l'admin).                   │
+│                                                                             │
+│   Message de succès amélioré : "Votre message a bien été envoyé.           │
+│   Nous vous répondrons dans les plus brefs délais."                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ app/Http/Controllers/ControllerCandidature.php                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ AJOUT :                                                                     │
+│   Après la sauvegarde d'une candidature, envoi automatique d'un email de   │
+│   notification à fernandtovignonnou@gmail.com via la classe Mail            │
+│   NouvelleCandidature.                                                      │
+│                                                                             │
+│   Message de succès amélioré : "Votre candidature a bien été envoyée !     │
+│   Nous vous contacterons très prochainement."                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ app/Models/Messages.php                                                     │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ AJOUT :                                                                     │
+│   Champ "lu" (boolean) ajouté au tableau $fillable pour permettre          │
+│   la gestion du statut lu/non lu depuis le contrôleur.                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ routes/web.php                                                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ AJOUT de 6 nouvelles routes (toutes protégées par middleware 'auth') :     │
+│                                                                             │
+│   POST  /administrateur/messages/{id}/toggle-read                          │
+│         → AdminController@toggleRead (marquer message lu/non lu)           │
+│         → nom : admin.messages.toggleRead                                  │
+│                                                                             │
+│   POST  /administrateur/temoignages                                         │
+│         → TemoignageController@store (créer un témoignage)                 │
+│         → nom : admin.temoignages.store                                    │
+│                                                                             │
+│   DELETE /administrateur/temoignages/{id}                                  │
+│         → TemoignageController@destroy (supprimer un témoignage)           │
+│         → nom : admin.temoignages.destroy                                  │
+│                                                                             │
+│   POST  /administrateur/temoignages/{id}/toggle                            │
+│         → TemoignageController@toggle (afficher/masquer)                   │
+│         → nom : admin.temoignages.toggle                                   │
+│                                                                             │
+│   DELETE /administrateur/projet/{id}                                        │
+│         → AdminController@destroy (supprimer un projet)                    │
+│         → nom : admin.projets.destroy                                      │
+│                                                                             │
+│ NETTOYAGE :                                                                 │
+│   - Import inutile RegisteredUserController supprimé                        │
+│   - Route /test-route de développement supprimée                            │
+│   - Commentaires de routes obsolètes supprimés                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+── FRONTEND ─────────────────────────────────────────────────────────────────
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ resources/views/app.blade.php  (layout principal)                           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ SEO — Meta tags :                                                           │
+│   - <title> dynamique via @yield('title', '...') avec valeur par défaut    │
+│   - <meta name="description"> dynamique via @yield('meta_description')     │
+│   - Balises Open Graph complètes :                                          │
+│       og:type, og:url, og:title, og:description, og:image, og:locale,      │
+│       og:site_name → partage correct sur Facebook et LinkedIn               │
+│                                                                             │
+│ Navigation :                                                                │
+│   - Navbar réactive au scroll : ombre apparaît après 20px de défilement   │
+│     (x-init + window.addEventListener scroll)                               │
+│   - Lien "Témoignages" ajouté dans le footer                               │
+│   - Liens sociaux avec target="_blank" rel="noopener" (bonne pratique)    │
+│                                                                             │
+│ Flash message global :                                                      │
+│   - Bandeau vert en haut de page après succès (contact, candidature)      │
+│   - Disparaît automatiquement après 5 secondes (Alpine.js setTimeout)     │
+│                                                                             │
+│ Bibliothèques :                                                             │
+│   - AOS.js (Animate On Scroll) intégré via CDN                             │
+│     Configuration : durée 700ms, animations jouées une seule fois,         │
+│     offset de déclenchement 60px                                           │
+│   - @stack('scripts') ajouté avant </body> pour les scripts par page      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ resources/views/index.blade.php  (page d'accueil)                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ CORRECTIONS :                                                               │
+│   [BUG] Double balise "<<div" dans la section "Moyens d'action" corrigée.  │
+│   Ce bug faisait apparaître "<div" comme texte visible sur le site.        │
+│                                                                             │
+│ SEO :                                                                       │
+│   @section('title') et @section('meta_description') définis par page.      │
+│                                                                             │
+│ NOUVELLE SECTION — Compteurs d'impact (entre À propos et Projets) :        │
+│   Fond bleu, 4 compteurs animés :                                           │
+│     - 1 200 Bénéficiaires                                                  │
+│     - 3 Pays d'action                                                       │
+│     - 50 Bénévoles actifs                                                   │
+│     - N Projets en cours (nombre réel depuis la base de données)           │
+│   Animation : les chiffres défilent de 0 jusqu'à la valeur cible lors du  │
+│   scroll (IntersectionObserver + requestAnimationFrame, 1,8 secondes).     │
+│                                                                             │
+│ NOUVELLE SECTION — Carousel de Témoignages :                               │
+│   Visible uniquement si des témoignages existent et sont actifs.           │
+│   Fonctionnalités :                                                         │
+│     - Navigation par flèches (précédent / suivant)                         │
+│     - Dots de navigation cliquables (s'élargissent sur le dot actif)       │
+│     - Transitions fluides (fade + slide) via Alpine.js x-transition        │
+│     - Citation typographique avec guillemets stylisés                       │
+│     - Affiche auteur + rôle sous chaque témoignage                         │
+│                                                                             │
+│ ANIMATIONS AOS sur toutes les sections :                                   │
+│   - Hero : fade-up (durée 900ms)                                           │
+│   - À propos : titre fade-up, 3 cartes avec délais 0/100/200ms             │
+│   - Compteurs : zoom-in avec délais 0/100/200/300ms                        │
+│   - Projets : titre fade-up, cartes fade-up avec délai progressif          │
+│   - Galerie : images fade-right / fade-up / fade-left                      │
+│   - Moyens d'action : fade-up                                              │
+│   - Bénévoles : cartes avec délais 0/100/200ms                             │
+│   - Support : zoom-in                                                       │
+│   - Contact : fade-right (carte infos) + fade-left (formulaire)            │
+│                                                                             │
+│ FORMULAIRE DE CONTACT amélioré :                                           │
+│   - Affichage des erreurs de validation sous chaque champ (@error)         │
+│   - Pré-remplissage des valeurs après erreur (old())                       │
+│   - Flash message de succès intégré dans le formulaire                     │
+│                                                                             │
+│ PROJETS :                                                                   │
+│   - Message "Aucun projet pour le moment" si la base est vide              │
+│   - Compteur de projets dans les compteurs d'impact (dynamique)            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ resources/views/admin/admin.blade.php  (dashboard admin)                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ DASHBOARD (vue d'ensemble) :                                                │
+│   - 4 cartes de statistiques avec données réelles depuis la DB :           │
+│       Projets en cours / Messages (+ non lus) / Candidatures / Témoignages │
+│   - Section "Derniers messages reçus" (3 plus récents) avec lien           │
+│     vers le panel messages                                                  │
+│                                                                             │
+│ SIDEBAR :                                                                   │
+│   - Logo VEF affiché (blanc)                                               │
+│   - Badge rouge sur "Messages reçus" avec le nombre de non lus            │
+│   - Badge vert sur "Candidatures" avec le nombre total                     │
+│   - Bouton "Déconnexion" en pied de sidebar (form POST /logout)            │
+│   - Lien "Retour au site" fonctionnel                                      │
+│                                                                             │
+│ PANEL MESSAGES :                                                            │
+│   - Tableau avec les messages réels de la base de données                  │
+│   - Colonne "Statut" avec point coloré (bleu = non lu, gris = lu)         │
+│   - Lignes non lues en gras sur fond bleu pâle                             │
+│   - Bouton "Marquer lu / Marquer non lu" par ligne                         │
+│     → Fonctionne en AJAX (sans rechargement de page)                      │
+│     → Met à jour visuellement la ligne instantanément                      │
+│   - Barre de recherche qui filtre les lignes en temps réel                 │
+│   - Email cliquable (mailto:) pour répondre directement                    │
+│                                                                             │
+│ PANEL CANDIDATURES :                                                        │
+│   - Tableau complet avec données réelles (avant : "Chargement...")         │
+│   - Colonnes : Nom, Email, Téléphone, Type (badge coloré),                 │
+│     Préférence (badge coloré), Disponibilités, Date, Détails               │
+│   - Badges colorés par type :                                               │
+│       Stagiaire = bleu / Bénévole = vert / Autre = violet                 │
+│   - Badges colorés par préférence :                                         │
+│       Locale = jaune / Nationale = orange / Internationale = bleu         │
+│   - Barre de recherche filtrante (nom, email)                              │
+│   - Filtre par type de participation (select)                              │
+│   - Bouton "Voir" → ouvre une modale avec tous les détails :              │
+│       informations personnelles, motivation complète,                       │
+│       bouton "Répondre par email" direct                                   │
+│                                                                             │
+│ PANEL TÉMOIGNAGES (nouveau, connecté au backend) :                         │
+│   - Formulaire de création (auteur, rôle, texte) → enregistré en DB      │
+│   - Liste des témoignages avec aperçu du texte                             │
+│   - Badge "Visible" (vert) ou "Masqué" (rouge)                            │
+│   - Bouton Afficher/Masquer (toggle visibilité sur le site public)         │
+│   - Bouton Supprimer avec confirmation                                     │
+│                                                                             │
+│ PANEL PROJETS :                                                             │
+│   - Date d'ajout affichée sous chaque projet                               │
+│   - Bouton supprimer stylisé (rouge) avec confirmation                     │
+│                                                                             │
+│ META CSRF :                                                                 │
+│   - <meta name="csrf-token"> ajouté dans le <head> pour les appels AJAX   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. BASE DE DONNÉES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Migration exécutée : 2026_07_02_..._create_temoignages_table — DONE ✓
+
+  Nouvelle table créée : temoignages
+  Colonnes :
+    id                bigint unsigned NOT NULL AUTO_INCREMENT
+    auteur            varchar(255) NOT NULL
+    role              varchar(255) NULL
+    texte             text NOT NULL
+    actif             tinyint(1) NOT NULL DEFAULT 1
+    created_at        timestamp NULL
+    updated_at        timestamp NULL
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. ROUTES ACTIVES (section /administrateur)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  GET    /administrateur
+         → AdminController@index  (nom: admin.projets.index)
+
+  POST   /administrateur/enregistrer-projet
+         → AdminController@store  (nom: admin.projets.enregistrer)
+
+  DELETE /administrateur/projet/{id}
+         → AdminController@destroy  (nom: admin.projets.destroy)
+
+  POST   /administrateur/messages/{id}/toggle-read
+         → AdminController@toggleRead  (nom: admin.messages.toggleRead)
+
+  POST   /administrateur/temoignages
+         → TemoignageController@store  (nom: admin.temoignages.store)
+
+  DELETE /administrateur/temoignages/{id}
+         → TemoignageController@destroy  (nom: admin.temoignages.destroy)
+
+  POST   /administrateur/temoignages/{id}/toggle
+         → TemoignageController@toggle  (nom: admin.temoignages.toggle)
+
+  Toutes ces routes sont protégées par : middleware('auth')
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. CONFIGURATION EMAIL — ACTION REQUISE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ÉTAT ACTUEL (.env) :
+    MAIL_MAILER=log
+
+  → En mode "log", les emails ne sont pas envoyés sur Gmail.
+    Ils sont écrits dans : storage/logs/laravel.log
+    (Utile pour tester que le code fonctionne.)
+
+  POUR ACTIVER LES VRAIS EMAILS (production) :
+  Modifier le fichier .env avec ces valeurs :
+
+    MAIL_MAILER=smtp
+    MAIL_HOST=smtp.gmail.com
+    MAIL_PORT=587
+    MAIL_USERNAME=fernandtovignonnou@gmail.com
+    MAIL_PASSWORD=VOTRE_MOT_DE_PASSE_APPLICATION_GOOGLE
+    MAIL_ENCRYPTION=tls
+    MAIL_FROM_ADDRESS="contact@verredeaufraiche.org"
+    MAIL_FROM_NAME="Verre d'Eau Fraîche"
+
+  IMPORTANT — Mot de passe application Google :
+    Ne pas utiliser le mot de passe Gmail habituel.
+    Créer un "Mot de passe d'application" dans :
+    Google Account → Sécurité → Validation en 2 étapes
+    → Mots de passe des applications → Générer
+
+  Après modification du .env, exécuter :
+    php artisan config:clear
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. RÉSUMÉ — CE QUE VOIT L'UTILISATEUR MAINTENANT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  SUR LE SITE PUBLIC :
+  ✓ Toutes les sections s'animent à l'apparition (scroll)
+  ✓ Les chiffres clés (1200 bénéficiaires, etc.) s'incrémentent en arrivant
+    sur la section Impact
+  ✓ Le carousel de témoignages apparaît dès qu'un témoignage est publié
+    dans l'admin (autrement la section est masquée)
+  ✓ Le formulaire de contact affiche les erreurs sous chaque champ
+  ✓ Un bandeau vert confirme l'envoi (disparaît seul après 5 secondes)
+  ✓ La navbar prend une ombre après 20px de scroll
+  ✓ Le site est bien référencé (meta title, description, Open Graph)
+  ✓ Le texte "<div" ne s'affiche plus (bug HTML corrigé)
+
+  DANS LE DASHBOARD ADMIN :
+  ✓ Les vraies statistiques sont affichées (plus de "0" partout)
+  ✓ Un badge rouge indique les messages non lus dans le menu
+  ✓ Les messages peuvent être marqués lus/non lus sans recharger la page
+  ✓ Toutes les candidatures sont visibles dans un tableau complet
+  ✓ Un clic sur "Voir" ouvre les détails complets d'une candidature
+  ✓ Les témoignages se créent, s'affichent et se suppriment depuis l'admin
+  ✓ L'admin peut se déconnecter depuis la sidebar
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. PROCHAINES ÉTAPES RECOMMANDÉES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PRIORITÉ HAUTE :
+  [ ] Configurer MAIL_MAILER=smtp dans .env pour les vrais emails
+  [ ] Ajouter des témoignages réels via le dashboard admin
+  [ ] Mettre à jour les vraies statistiques d'impact (1200 bénéficiaires,
+      3 pays, 50 bénévoles) dans index.blade.php section Impact
+
+  PRIORITÉ MOYENNE :
+  [ ] Ajouter un middleware de vérification de rôle admin
+      (actuellement tout utilisateur connecté peut accéder à /administrateur)
+  [ ] Créer une page blog/actualités pour le SEO et l'engagement
+  [ ] Optimiser les images téléchargées (redimensionnement automatique)
+
+  PRIORITÉ BASSE :
+  [ ] Export CSV des messages et candidatures
+  [ ] Formulaire de candidature multi-étapes (barre de progression)
+  [ ] Webhooks Stripe pour confirmer les dons en base de données
+
+================================================================================
+                    Fin du rapport — Association VEF
+================================================================================
