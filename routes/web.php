@@ -46,6 +46,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/administrateur/enregistrer-projet', [AdminController::class, 'store'])
         ->name('admin.projets.enregistrer');
 
+    Route::put('/administrateur/projet/{id}', [AdminController::class, 'update'])
+        ->name('admin.projets.update');
+
     Route::delete('/administrateur/projet/{id}', [AdminController::class, 'destroy'])
         ->name('admin.projets.destroy');
 
