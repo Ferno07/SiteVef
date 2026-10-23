@@ -70,6 +70,8 @@
         }
         .chart-card h2 { font-size: 16px; font-weight: 700; color: #111827; margin: 0 0 20px; }
     </style>
+<link rel="stylesheet" href="{{ asset('Style1/css/editorial-admin.css') }}">
+<link rel="stylesheet" href="{{ asset('Style1/css/project-status.css') }}">
 </head>
 <body>
 <div class="admin-container">
@@ -86,7 +88,7 @@
                     <span class="nav-icon">📊</span><span>Dashboard</span>
                 </a></li>
                 <li><a href="#" class="nav-item" data-panel="projets">
-                    <span class="nav-icon">📁</span><span>Projets en cours</span>
+                    <span class="nav-icon">📁</span><span>Projets</span>
                 </a></li>
                 <li><a href="#" class="nav-item" data-panel="membres">
                     <span class="nav-icon">👥</span>
@@ -111,6 +113,8 @@
                         <span class="badge-unread" style="background:#059669;">{{ $stats['candidatures'] }}</span>
                     @endif
                 </a></li>
+                <li><a href="#actualites" class="nav-item" data-panel="actualites"><span class="nav-icon">📰</span><span>Actualités</span></a></li>
+                <li><a href="#dons" class="nav-item" data-panel="dons"><span class="nav-icon">💙</span><span>Dons et collectes</span></a></li>
             </ul>
         </nav>
         <div class="sidebar-footer">
@@ -132,6 +136,8 @@
             <div class="alert-success" style="margin: 16px 24px 0;">✅ {{ session('success') }}</div>
         @endif
 
+        @if($errors->any())<div class="validation-errors" role="alert"><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
+        @include('admin.partials.editorial-panels')
         {{-- ── Dashboard ──────────────────────────────────────────── --}}
         <div class="admin-panel active" id="dashboard">
             <div class="panel-header">
@@ -141,7 +147,7 @@
             <div class="dashboard-stats">
                 <div class="stat-card">
                     <h3>Projets en cours</h3>
-                    <p class="stat-number">{{ $stats['projets'] }}</p>
+                    <p class="stat-number">{{ $projets->where('publication','publie')->where('statut','en_cours')->count() }}</p>
                 </div>
                 <div class="stat-card">
                     <h3>Messages reçus</h3>
@@ -158,6 +164,7 @@
                 </div>
             </div>
 
+            @include('admin.partials.editorial-stats')
             {{-- ── Statistiques visiteurs ──────────────────────────────── --}}
             <div class="dashboard-stats" style="margin-top:16px;">
                 <div class="stat-card stat-card-visitors">
@@ -224,39 +231,11 @@
         {{-- ── Projets ─────────────────────────────────────────────── --}}
         <div class="admin-panel" id="projets">
             <div class="panel-header">
-                <h1>Projets en cours</h1>
+                <h1>Projets</h1>
                 <p>Gérer les projets de l'association</p>
             </div>
             <div class="panel-content">
-                <div class="form-section">
-                    <h2>Ajouter un nouveau projet</h2>
-                    <form method="POST" action="{{ route('admin.projets.enregistrer') }}" enctype="multipart/form-data">
-                        @csrf
-                        <div class="form-group">
-                            <label for="projet-titre">Titre du projet <span class="required">*</span></label>
-                            <input type="text" id="projet-titre" name="titre" required placeholder="Ex: Construction d'une école">
-                        </div>
-                        <div class="form-group">
-                            <label for="projet-description">Description courte</label>
-                            <input type="text" id="projet-description" name="description" placeholder="Résumé en une ligne">
-                        </div>
-                        <div class="form-group">
-                            <label for="projet-description-longue">Description détaillée</label>
-                            <textarea id="projet-description-longue" name="description_longue" rows="5" placeholder="Description complète du projet..."></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="projet-images">Photos du projet</label>
-                            <input type="file" id="projet-images" name="images[]" accept="image/*" multiple>
-                            <p style="font-size:12px; color:#9ca3af; margin-top:4px;">Vous pouvez sélectionner plusieurs photos (la première sera utilisée comme photo de couverture).</p>
-                            <div class="image-preview" id="projet-image-preview"></div>
-                        </div>
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-primary">Ajouter le projet</button>
-                            <button type="reset" class="btn btn-secondary">Réinitialiser</button>
-                        </div>
-                    </form>
-                </div>
-
+                <details class="editorial-section"><summary>Créer un projet</summary><form method="post" action="{{ route('admin.projets.enregistrer') }}" enctype="multipart/form-data">@csrf @include('admin.partials.project-form', ['projet'=>new \App\Models\Projet()])</form></details>
                 <hr class="section-divider">
 
                 <div class="list-section">
@@ -281,15 +260,7 @@
                                     <p style="color:#6b7280; font-size:13px;">{{ $projet->description }}</p>
                                     <p style="color:#9ca3af; font-size:12px; margin-top:4px;">Ajouté le {{ $projet->created_at->format('d/m/Y') }}</p>
                                     <div style="display:flex; gap:8px; margin-top:8px;">
-                                        <button type="button" onclick="openEditProjet(this)"
-                                                data-id="{{ $projet->id }}"
-                                                data-titre="{{ $projet->titre }}"
-                                                data-description="{{ $projet->description }}"
-                                                data-longue="{{ $projet->description_longue }}"
-                                                data-images="{{ $projet->images->map(fn ($img) => ['id' => $img->id, 'url' => asset($img->chemin)])->toJson() }}"
-                                                class="btn btn-secondary" style="font-size:12px; padding:4px 12px;">
-                                            ✏️ Modifier
-                                        </button>
+                                        <a href="{{ route('admin.projets.edit',$projet) }}" class="btn btn-secondary">Modifier</a><a href="{{ route('admin.projets.preview',$projet) }}" class="btn btn-secondary">Prévisualiser</a><span class="tag">{{ ['brouillon'=>'Brouillon','publie'=>'Publié','archive'=>'Archivé'][$projet->publication] ?? $projet->publication }}</span><x-project-status :status="$projet->statut" />
                                         <form action="{{ route('posts.destroy', $projet->id) }}" method="POST"
                                               onsubmit="return confirm('Supprimer ce projet définitivement ?')">
                                             @csrf
@@ -662,58 +633,6 @@
     </main>
 </div>
 
-{{-- ── Modal modification projet ─────────────────────────────────────── --}}
-<div id="modal-edit-projet"
-     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:1100; align-items:center; justify-content:center; padding:16px;">
-    <div style="background:#fff; border-radius:16px; max-width:600px; width:100%; max-height:90vh; overflow-y:auto; padding:32px; position:relative; box-shadow:0 20px 60px rgba(0,0,0,.2);">
-
-        <button onclick="closeEditProjet()"
-                style="position:absolute; top:16px; right:16px; background:#f3f4f6; border:none; border-radius:50%; width:34px; height:34px; font-size:18px; cursor:pointer; color:#6b7280; display:flex; align-items:center; justify-content:center;">
-            ×
-        </button>
-
-        <h2 style="margin:0 0 24px; font-size:18px; font-weight:700; color:#111827;">
-            ✏️ Modifier le projet
-        </h2>
-
-        <form id="form-edit-projet" method="POST" action="" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
-
-            <div class="form-group">
-                <label for="edit-projet-titre">Titre du projet <span class="required">*</span></label>
-                <input type="text" id="edit-projet-titre" name="titre" required>
-            </div>
-
-            <div class="form-group">
-                <label for="edit-projet-description">Description courte</label>
-                <input type="text" id="edit-projet-description" name="description">
-            </div>
-
-            <div class="form-group">
-                <label for="edit-projet-description-longue">Description détaillée</label>
-                <textarea id="edit-projet-description-longue" name="description_longue" rows="5"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Photos actuelles</label>
-                <div id="edit-projet-images-actuelles" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:6px;"></div>
-                <p style="font-size:12px; color:#9ca3af; margin-top:6px;">Cochez une photo pour la supprimer à l'enregistrement.</p>
-            </div>
-
-            <div class="form-group">
-                <label for="edit-projet-images">Ajouter des photos</label>
-                <input type="file" id="edit-projet-images" name="images[]" accept="image/*" multiple>
-            </div>
-
-            <div class="form-actions" style="margin-top:24px; padding-top:20px; border-top:1px solid #e5e7eb;">
-                <button type="submit" class="btn btn-primary">Enregistrer</button>
-                <button type="button" onclick="closeEditProjet()" class="btn btn-secondary">Annuler</button>
-            </div>
-        </form>
-    </div>
-</div>
-
 {{-- ── Modal modification membre ─────────────────────────────────────── --}}
 <div id="modal-edit-membre"
      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:1100; align-items:center; justify-content:center; padding:16px;">
@@ -784,7 +703,7 @@
     </div>
 </div>
 
-<script src="{{ asset('Style1/js/admin.js') }}"></script>
+
 <script>
 // ── Navigation entre panels ──────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function () {
@@ -872,74 +791,24 @@ function toggleRead(id, btn) {
 // ── Modal détail candidature ─────────────────────────────────────────
 function showCandidatureDetail(btn) {
     document.getElementById('modal-titre').textContent = btn.dataset.nom;
-    document.getElementById('modal-body').innerHTML = `
-        <table style="width:100%; border-collapse:collapse; font-size:14px;">
-            <tr style="border-bottom:1px solid #e5e7eb;"><td style="padding:8px 4px; color:#6b7280; width:40%;">Email</td><td style="padding:8px 4px;"><a href="mailto:${btn.dataset.email}" style="color:#2563eb;">${btn.dataset.email}</a></td></tr>
-            <tr style="border-bottom:1px solid #e5e7eb;"><td style="padding:8px 4px; color:#6b7280;">Téléphone</td><td style="padding:8px 4px;"><a href="tel:${btn.dataset.tel}">${btn.dataset.tel}</a></td></tr>
-            <tr style="border-bottom:1px solid #e5e7eb;"><td style="padding:8px 4px; color:#6b7280;">Date de naissance</td><td style="padding:8px 4px;">${btn.dataset.naissance}</td></tr>
-            <tr style="border-bottom:1px solid #e5e7eb;"><td style="padding:8px 4px; color:#6b7280;">Adresse</td><td style="padding:8px 4px;">${btn.dataset.adresse}</td></tr>
-            <tr style="border-bottom:1px solid #e5e7eb;"><td style="padding:8px 4px; color:#6b7280;">Type de participation</td><td style="padding:8px 4px;">${btn.dataset.type}${btn.dataset.autreType ? ' (' + btn.dataset.autreType + ')' : ''}</td></tr>
-            <tr style="border-bottom:1px solid #e5e7eb;"><td style="padding:8px 4px; color:#6b7280;">Préférence d'action</td><td style="padding:8px 4px;">${btn.dataset.preference}</td></tr>
-            <tr style="border-bottom:1px solid #e5e7eb;"><td style="padding:8px 4px; color:#6b7280;">Disponibilités</td><td style="padding:8px 4px;">${btn.dataset.dispos}</td></tr>
-            <tr><td style="padding:8px 4px; color:#6b7280; vertical-align:top;">Motivation</td><td style="padding:8px 4px; line-height:1.7;">${btn.dataset.motivation}</td></tr>
-        </table>
-        <div style="margin-top:20px;">
-            <a href="mailto:${btn.dataset.email}" style="display:inline-block; padding:10px 20px; background:#2563eb; color:#fff; border-radius:8px; text-decoration:none; font-weight:600; font-size:14px;">
-                Répondre par email
-            </a>
-        </div>
-    `;
+    const body = document.getElementById('modal-body');
+    body.replaceChildren();
+    const table = document.createElement('table');
+    table.style.cssText = 'width:100%;font-size:14px';
+    const fields = [['Email','email'],['Téléphone','tel'],['Date de naissance','naissance'],['Adresse','adresse'],['Type de participation','type'],['Autre participation','autreType'],['Préférence d’action','preference'],['Disponibilités','dispos'],['Motivation','motivation']];
+    fields.forEach(([label,key]) => {
+        const row=table.insertRow();
+        row.insertCell().textContent=label;
+        const cell=row.insertCell(); cell.textContent=btn.dataset[key] || '—';
+        cell.style.whiteSpace='pre-wrap';
+    });
+    body.appendChild(table);
     document.getElementById('candidature-modal').style.display = 'flex';
 }
 
 // Fermer modal en cliquant à l'extérieur
 document.getElementById('candidature-modal').addEventListener('click', function(e) {
     if (e.target === this) this.style.display = 'none';
-});
-
-// ── Modal modification projet ────────────────────────────────────────
-function openEditProjet(btn) {
-    const id = btn.dataset.id;
-
-    document.getElementById('edit-projet-titre').value              = btn.dataset.titre       || '';
-    document.getElementById('edit-projet-description').value        = btn.dataset.description || '';
-    document.getElementById('edit-projet-description-longue').value = btn.dataset.longue       || '';
-    document.getElementById('edit-projet-images').value              = '';
-
-    let images = [];
-    try { images = JSON.parse(btn.dataset.images || '[]'); } catch (e) { images = []; }
-
-    const container = document.getElementById('edit-projet-images-actuelles');
-    container.innerHTML = '';
-    if (!images.length) {
-        container.innerHTML = '<p style="color:#9ca3af; font-size:13px;">Aucune photo pour ce projet.</p>';
-    } else {
-        images.forEach(img => {
-            const label = document.createElement('label');
-            label.style.cssText = 'position:relative; cursor:pointer; display:block;';
-            label.innerHTML = `
-                <img src="${img.url}" style="width:90px; height:70px; object-fit:cover; border-radius:8px; display:block; border:2px solid transparent;">
-                <input type="checkbox" name="supprimer_images[]" value="${img.id}"
-                       style="position:absolute; top:4px; right:4px; width:16px; height:16px; accent-color:#ef4444;">
-            `;
-            container.appendChild(label);
-        });
-    }
-
-    document.getElementById('form-edit-projet').action = '/administrateur/projet/' + id;
-
-    document.getElementById('modal-edit-projet').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-}
-
-function closeEditProjet() {
-    document.getElementById('modal-edit-projet').style.display = 'none';
-    document.body.style.overflow = '';
-}
-
-// Fermer la modal projet en cliquant sur le fond
-document.getElementById('modal-edit-projet').addEventListener('click', function(e) {
-    if (e.target === this) closeEditProjet();
 });
 
 // ── Modal modification membre ────────────────────────────────────────
@@ -978,7 +847,6 @@ document.getElementById('modal-edit-membre').addEventListener('click', function(
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeEditMembre();
-        closeEditProjet();
         document.getElementById('candidature-modal').style.display = 'none';
     }
 });
@@ -989,7 +857,7 @@ document.addEventListener('keydown', function(e) {
     const donnees = @json($graphDonnees);
 
     const ctx = document.getElementById('visiteurs-chart');
-    if (!ctx) return;
+    if (!ctx || !window.Chart) return;
 
     const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 300);
     gradient.addColorStop(0, 'rgba(37, 99, 235, 0.25)');
@@ -1046,5 +914,5 @@ document.addEventListener('keydown', function(e) {
     });
 })();
 </script>
-</body>
+<script>document.addEventListener('DOMContentLoaded',()=>{const activate=()=>{const id=location.hash.slice(1);if(!id)return;const panel=document.getElementById(id);if(!panel?.classList.contains('admin-panel'))return;document.querySelectorAll('.admin-panel').forEach(p=>p.classList.toggle('active',p===panel));document.querySelectorAll('.nav-item[data-panel]').forEach(a=>a.classList.toggle('active',a.dataset.panel===id));};activate();window.addEventListener('hashchange',activate);document.querySelectorAll('.nav-item[data-panel]').forEach(a=>a.addEventListener('click',()=>{location.hash=a.dataset.panel}));});</script></body>
 </html>

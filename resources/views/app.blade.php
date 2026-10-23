@@ -13,10 +13,12 @@
     <meta property="og:url"         content="{{ url()->current() }}">
     <meta property="og:title"       content="@yield('title', "Verre d'Eau Fraîche — Association humanitaire")">
     <meta property="og:description" content="@yield('meta_description', "Agissons pour chacun, agissons pour tous.")">
-    <meta property="og:image"       content="{{ asset('Style1/images/better.jpg') }}">
+    <meta property="og:image"       content="@yield('og_image', asset('Style1/images/better.jpg'))">
     <meta property="og:locale"      content="fr_FR">
     <meta property="og:site_name"   content="Verre d'Eau Fraîche">
 
+    <link rel="canonical" href="{{ url()->current() }}">
+    @stack('head')
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('Style1/images/logo.png') }}">
 
@@ -34,9 +36,12 @@
     <style>
         body { font-family: 'Outfit', sans-serif; }
         [x-cloak] { display: none !important; }
+        :focus-visible { outline: 3px solid #2563eb; outline-offset: 4px; }
+        @media(prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
         /* Empêche tout débordement horizontal sur mobile */
         html, body { overflow-x: hidden; max-width: 100%; }
     </style>
+<link rel="stylesheet" href="{{ asset('Style1/css/project-status.css') }}">
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased flex flex-col min-h-screen">
 
@@ -44,7 +49,7 @@
     <header x-data="{ mobileMenuOpen: false, scrolled: false }"
             x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 20 })"
             :class="scrolled ? 'shadow-md bg-white' : 'bg-white/90 backdrop-blur-md border-b border-gray-100'"
-            class="fixed w-full z-50 transition-all duration-300">
+            @keydown.escape.window="mobileMenuOpen = false" class="fixed w-full z-50 transition-all duration-300">
 
         <nav class="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8" aria-label="Global">
             <div class="flex lg:flex-1">
@@ -65,16 +70,7 @@
                 </button>
             </div>
 
-            <!-- Menu desktop -->
-            <div class="hidden lg:flex lg:gap-x-8">
-                <a href="{{ url('/#hero') }}"      class="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">Accueil</a>
-                <a href="{{ url('/#about') }}"     class="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">À propos</a>
-                <a href="{{ url('/#services') }}"  class="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">Nos projets</a>
-                <a href="{{ url('/#contact') }}"   class="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">Contact</a>
-                <a href="{{ route('equipe') }}"     class="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">Notre Équipe</a>
-                <a href="{{ route('rejoindre') }}"  class="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">Nous rejoindre</a>
-            </div>
-
+@php($navGroups=["L'association"=>['À propos'=>url('/#about'),'Notre équipe'=>route('equipe')], 'Nos projets'=>['Tous les projets'=>route('projets.index'),'Projets en cours'=>route('projets.index',['statut'=>'en_cours']),'Projets réalisés'=>route('projets.index',['statut'=>'realise'])], "S’engager"=>['Devenir bénévole'=>route('rejoindre'),'Devenir partenaire'=>url('/#contact'),'Faire un don'=>route('donation.index')]])<div class="hidden lg:flex items-center gap-x-5 text-sm font-semibold"><a href="{{ route('index') }}" class="hover:text-blue-600">Accueil</a>@foreach($navGroups as $label=>$links)<details class="relative group"><summary class="cursor-pointer hover:text-blue-600">{{ $label }}</summary><div class="absolute left-0 top-full pt-4 w-56"><div class="bg-white border border-gray-100 shadow-lg rounded-xl p-2">@foreach($links as $text=>$href)<a class="block p-3 rounded-lg hover:bg-blue-50 focus:bg-blue-50" href="{{ $href }}">{{ $text }}</a>@endforeach</div></div></details>@if($label==='Nos projets')<a href="{{ route('actualites.index') }}" class="hover:text-blue-600">Actualités</a>@endif @endforeach<a href="{{ url('/#contact') }}" class="hover:text-blue-600">Contact</a></div>
             <div class="hidden lg:flex lg:flex-1 lg:justify-end">
                 <a href="{{ route('donation.index') }}"
                    class="rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 hover:shadow-lg hover:-translate-y-0.5 transition-all">
@@ -86,7 +82,7 @@
         <!-- Menu mobile -->
         <div x-show="mobileMenuOpen" class="lg:hidden" role="dialog" aria-modal="true" x-cloak>
             <div class="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm" @click="mobileMenuOpen = false"></div>
-            <div class="fixed right-0 top-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:ring-1 sm:ring-gray-900/10"
+            <div class="fixed right-0 top-0 z-50 max-h-screen w-full overflow-y-auto bg-white px-6 py-6 sm:ring-1 sm:ring-gray-900/10"
                  x-transition:enter="transform transition ease-in-out duration-300"
                  x-transition:enter-start="translate-x-full"
                  x-transition:enter-end="translate-x-0"
@@ -97,7 +93,7 @@
                     <a href="{{ url('/') }}" class="-m-1.5 p-1.5">
                         <img class="h-10 w-auto" src="{{ asset('Style1/images/logo.png') }}" alt="Logo VEF">
                     </a>
-                    <button type="button" @click="mobileMenuOpen = false" class="-m-2.5 rounded-md p-2.5 text-gray-700 hover:bg-gray-100">
+                    <button type="button" aria-label="Fermer le menu" @click="mobileMenuOpen = false" class="-m-2.5 rounded-md p-2.5 text-gray-700 hover:bg-gray-100">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -105,14 +101,7 @@
                 </div>
                 <div class="mt-6 flow-root">
                     <div class="-my-6 divide-y divide-gray-500/10">
-                        <div class="space-y-2 py-6">
-                            <a href="{{ url('/#hero') }}"     @click="mobileMenuOpen = false" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50">Accueil</a>
-                            <a href="{{ url('/#about') }}"    @click="mobileMenuOpen = false" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50">À propos</a>
-                            <a href="{{ url('/#services') }}" @click="mobileMenuOpen = false" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50">Nos projets</a>
-                            <a href="{{ url('/#contact') }}"  @click="mobileMenuOpen = false" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50">Contact</a>
-                            <a href="{{ route('equipe') }}"   @click="mobileMenuOpen = false" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50">Notre Équipe</a>
-                            <a href="{{ route('rejoindre') }}" @click="mobileMenuOpen = false" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50">Nous rejoindre</a>
-                        </div>
+                        <div class="space-y-2 py-6"><a href="{{ route('index') }}" class="block py-3 font-semibold">Accueil</a>@foreach($navGroups as $label=>$links)<details class="py-2"><summary class="font-semibold cursor-pointer">{{ $label }}</summary><div class="pl-4">@foreach($links as $text=>$href)<a class="block py-3 text-gray-700" href="{{ $href }}">{{ $text }}</a>@endforeach</div></details>@if($label==='Nos projets')<a href="{{ route('actualites.index') }}" class="block py-3 font-semibold">Actualités</a>@endif @endforeach<a href="{{ url('/#contact') }}" class="block py-3 font-semibold">Contact</a></div>
                         <div class="py-6">
                             <a href="{{ route('donation.index') }}" @click="mobileMenuOpen = false"
                                class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold text-blue-600 hover:bg-gray-50 text-center border border-blue-100 bg-blue-50">
@@ -137,6 +126,8 @@
             </div>
         @endif
 
+        @if(session('error'))<div class="max-w-7xl mx-auto p-4 text-red-800 bg-red-50" role="alert">{{ session('error') }}</div>@endif
+        @if($errors->any())<div class="max-w-7xl mx-auto p-4 text-red-800 bg-red-50" role="alert">{{ $errors->first() }}</div>@endif
         @yield('content')
     </main>
 
@@ -210,8 +201,7 @@
         </div>
     </footer>
 
-    <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+
     <!-- AOS -->
     <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
     <script>

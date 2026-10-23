@@ -2,22 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use App\Mail\NouveauMessage;
+use App\Models\Membre;
 use App\Models\Messages;
 use App\Models\Projet;
 use App\Models\Temoignage;
-use App\Models\Membre;
-use App\Mail\NouveauMessage;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class ControllerAccueil extends Controller
 {
     public function index()
     {
-        $projets     = Projet::with('images')->get();
+        $projets = Projet::published()->with('images')->get();
         $temoignages = Temoignage::where('actif', true)->orderBy('created_at', 'desc')->get();
 
-        return view('index', compact('projets', 'temoignages'));
+        $actualites = \App\Models\Article::published()->with('category')->latest('published_at')->limit(3)->get();
+
+        return view('index', compact('projets', 'temoignages', 'actualites'));
     }
 
     public function equipe()
@@ -36,20 +38,20 @@ class ControllerAccueil extends Controller
     public function message(Request $request)
     {
         $request->validate([
-            'nom'     => 'required|string|max:255',
-            'prenom'  => 'required|string|max:255',
-            'email'   => 'required|email|max:255',
-            'objet'   => 'required|string|max:255',
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'objet' => 'required|string|max:255',
             'message' => 'required|string',
         ]);
 
         $contactMessage = Messages::create([
-            'nom'     => $request->nom,
-            'prenom'  => $request->prenom,
-            'email'   => $request->email,
-            'objet'   => $request->objet,
+            'nom' => $request->nom,
+            'prenom' => $request->prenom,
+            'email' => $request->email,
+            'objet' => $request->objet,
             'message' => $request->message,
-            'lu'      => false,
+            'lu' => false,
         ]);
 
         Mail::to('fernandtovignonnou@gmail.com')->send(new NouveauMessage($contactMessage));
