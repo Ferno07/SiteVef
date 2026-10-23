@@ -513,11 +513,10 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="rounded-2xl overflow-hidden shadow-sm border border-gray-100 h-64 lg:h-80">
                     <iframe class="w-full h-full border-0" title="Localisation Cotonou"
-                            loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-                            src="https://www.openstreetmap.org/export/embed.html?bbox=0.5%2C6.0%2C3.5%2C12.0&layer=mapnik&marker=2.3158%2C6.4969">
+                            loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen
+                            src="https://maps.google.com/maps?q=6.4969,2.3158&z=14&output=embed">
                     </iframe>
                 </div>
             </div>
