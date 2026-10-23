@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Membre;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 
 class MembreController extends Controller
 {
@@ -15,30 +14,30 @@ class MembreController extends Controller
     {
         $request->validate([
             'prenom' => 'required|string|max:100',
-            'nom'    => 'required|string|max:100',
-            'poste'  => 'required|string|max:150',
-            'bio'    => 'nullable|string|max:500',
-            'ordre'  => 'nullable|integer|min:0',
-            'photo'  => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
+            'nom' => 'required|string|max:100',
+            'poste' => 'required|string|max:150',
+            'bio' => 'nullable|string|max:500',
+            'ordre' => 'nullable|integer|min:0',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
         ]);
 
         $photoPath = null;
 
         if ($request->hasFile('photo')) {
-            $file      = $request->file('photo');
-            $filename  = time() . '_' . $file->getClientOriginalName();
+            $file = $request->file('photo');
+            $filename = (string) \Illuminate\Support\Str::uuid().'.'.$file->extension();
             $file->move(public_path('Style1/imagesMembres'), $filename);
-            $photoPath = 'Style1/imagesMembres/' . $filename;
+            $photoPath = 'Style1/imagesMembres/'.$filename;
         }
 
         Membre::create([
             'prenom' => $request->prenom,
-            'nom'    => $request->nom,
-            'poste'  => $request->poste,
-            'bio'    => $request->bio,
-            'ordre'  => $request->ordre ?? 0,
-            'photo'  => $photoPath,
-            'actif'  => true,
+            'nom' => $request->nom,
+            'poste' => $request->poste,
+            'bio' => $request->bio,
+            'ordre' => $request->ordre ?? 0,
+            'photo' => $photoPath,
+            'actif' => true,
         ]);
 
         return redirect()->route('admin.projets.index')
@@ -54,11 +53,11 @@ class MembreController extends Controller
 
         $request->validate([
             'prenom' => 'required|string|max:100',
-            'nom'    => 'required|string|max:100',
-            'poste'  => 'required|string|max:150',
-            'bio'    => 'nullable|string|max:500',
-            'ordre'  => 'nullable|integer|min:0',
-            'photo'  => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
+            'nom' => 'required|string|max:100',
+            'poste' => 'required|string|max:150',
+            'bio' => 'nullable|string|max:500',
+            'ordre' => 'nullable|integer|min:0',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
         ]);
 
         // Mise à jour de la photo uniquement si une nouvelle est envoyée
@@ -68,17 +67,17 @@ class MembreController extends Controller
                 unlink(public_path($membre->photo));
             }
 
-            $file      = $request->file('photo');
-            $filename  = time() . '_' . $file->getClientOriginalName();
+            $file = $request->file('photo');
+            $filename = (string) \Illuminate\Support\Str::uuid().'.'.$file->extension();
             $file->move(public_path('Style1/imagesMembres'), $filename);
-            $membre->photo = 'Style1/imagesMembres/' . $filename;
+            $membre->photo = 'Style1/imagesMembres/'.$filename;
         }
 
         $membre->prenom = $request->prenom;
-        $membre->nom    = $request->nom;
-        $membre->poste  = $request->poste;
-        $membre->bio    = $request->bio;
-        $membre->ordre  = $request->ordre ?? 0;
+        $membre->nom = $request->nom;
+        $membre->poste = $request->poste;
+        $membre->bio = $request->bio;
+        $membre->ordre = $request->ordre ?? 0;
         $membre->save();
 
         return redirect()->route('admin.projets.index')
@@ -108,8 +107,8 @@ class MembreController extends Controller
      */
     public function toggle(int $id)
     {
-        $membre        = Membre::findOrFail($id);
-        $membre->actif = !$membre->actif;
+        $membre = Membre::findOrFail($id);
+        $membre->actif = ! $membre->actif;
         $membre->save();
 
         return redirect()->route('admin.projets.index')

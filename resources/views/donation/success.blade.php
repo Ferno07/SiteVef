@@ -77,10 +77,10 @@
             </svg>
         </div>
         
-        <h1 class="success-title">Merci infiniment !</h1>
+        <h1 class="success-title">Merci pour votre soutien !</h1>
         
         <p class="success-message">
-            Votre don a bien été reçu. Grâce à votre générosité, nous pouvons continuer à mener nos actions et à aider ceux qui en ont besoin.
+            Votre retour depuis le paiement a bien été pris en compte. Seule la confirmation sécurisée du prestataire valide le don ; cette page ne constitue pas un reçu.
         </p>
 
         <a href="{{ route('index') }}" class="home-btn">

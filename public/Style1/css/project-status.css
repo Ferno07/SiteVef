@@ -1,0 +1,12 @@
+/* Statuts partagés entre les cartes, les pages de projet et l’administration. */
+.project-status{--status-bg:#f3f4f6;--status-text:#374151;--status-border:#d1d5db;--status-solid:#4b5563;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:fit-content;padding:6px 13px;border:1px solid var(--status-border);border-radius:999px;background:var(--status-bg);color:var(--status-text);font-size:13px;font-weight:600;line-height:1.5;vertical-align:middle;white-space:nowrap}
+.project-status--en_cours{--status-bg:#dcfce7;--status-text:#166534;--status-border:#bbf7d0;--status-solid:#15803d}
+.project-status--a_venir{--status-bg:#eff6ff;--status-text:#1e40af;--status-border:#bfdbfe;--status-solid:#2563eb}
+.project-status--realise{--status-bg:#f3e8ff;--status-text:#6b21a8;--status-border:#e9d5ff;--status-solid:#7e22ce}
+.project-status__marker{display:inline-flex;align-items:center;justify-content:center;width:7px;height:7px;flex-shrink:0;border-radius:50%;background:currentColor}
+.project-status--realise .project-status__marker{width:15px;height:15px;font-size:11px;background:transparent}
+.project-status-filter{padding:10px 18px;text-decoration:none;transition:background-color .18s,color .18s,box-shadow .18s}
+.project-status-filter:hover{box-shadow:0 2px 8px rgb(15 23 42 / .08)}
+.project-status-filter[aria-current=page]{background:var(--status-solid);border-color:var(--status-solid);color:white;box-shadow:0 3px 10px rgb(15 23 42 / .1)}
+.project-status-filter:focus-visible{outline:3px solid var(--status-solid);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.project-status-filter{transition:none}}
