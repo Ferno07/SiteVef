@@ -5,6 +5,7 @@ use App\Http\Controllers\ControllerAccueil;
 use App\Http\Controllers\ControllerCandidature;
 use App\Http\Controllers\DonationController;
 use App\Http\Controllers\MembreController;
+use App\Http\Controllers\ParrainageController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TemoignageController;
@@ -15,6 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [ControllerAccueil::class, 'index'])->name('index');
 
 Route::get('/rejoindre', fn () => view('rejoindre'))->name('rejoindre');
+
+Route::get('/parrainage', [ParrainageController::class, 'index'])->name('parrainage.index');
 
 Route::get('/equipe', [ControllerAccueil::class, 'equipe'])->name('equipe');
 
@@ -93,6 +96,8 @@ Route::get('/projets/{slug}', [\App\Http\Controllers\EditorialController::class,
 Route::get('/actualites', [\App\Http\Controllers\EditorialController::class, 'articles'])->name('actualites.index');
 Route::get('/actualites/{slug}', [\App\Http\Controllers\EditorialController::class, 'article'])->name('actualites.show');
 Route::middleware(['auth', 'can:admin'])->prefix('administrateur')->group(function () {
+    Route::get('/parrainage', [ParrainageController::class, 'edit'])->name('admin.parrainage.edit');
+    Route::put('/parrainage/{programme:code}', [ParrainageController::class, 'update'])->name('admin.parrainage.update');
     Route::get('/projets/{projet}/editer', [\App\Http\Controllers\EditorialController::class, 'editProjet'])->name('admin.projets.edit');
     Route::get('/projets/{projet}/apercu', [\App\Http\Controllers\EditorialController::class, 'previewProjet'])->name('admin.projets.preview');
     Route::get('/articles/creer', [\App\Http\Controllers\EditorialController::class, 'editArticle'])->name('admin.articles.create');

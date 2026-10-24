@@ -115,6 +115,7 @@
                 </a></li>
                 <li><a href="#actualites" class="nav-item" data-panel="actualites"><span class="nav-icon">📰</span><span>Actualités</span></a></li>
                 <li><a href="#dons" class="nav-item" data-panel="dons"><span class="nav-icon">💙</span><span>Dons et collectes</span></a></li>
+                <li><a href="{{ route('admin.parrainage.edit') }}" class="nav-item"><span class="nav-icon" aria-hidden="true">♡</span><span>Parrainage</span></a></li>
             </ul>
         </nav>
         <div class="sidebar-footer">
@@ -707,7 +708,7 @@
 <script>
 // ── Navigation entre panels ──────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function () {
-    const navItems = document.querySelectorAll('.nav-item');
+    const navItems = document.querySelectorAll('.nav-item[data-panel]');
     const panels   = document.querySelectorAll('.admin-panel');
 
     navItems.forEach(item => {
