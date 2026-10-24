@@ -70,7 +70,45 @@
                 </button>
             </div>
 
-@php($navGroups=["L'association"=>['À propos'=>url('/#about'),'Notre équipe'=>route('equipe')], 'Nos projets'=>['Tous les projets'=>route('projets.index'),'Projets en cours'=>route('projets.index',['statut'=>'en_cours']),'Projets réalisés'=>route('projets.index',['statut'=>'realise'])], "S’engager"=>['Devenir bénévole'=>route('rejoindre'),'Devenir partenaire'=>url('/#contact'),'Faire un don'=>route('donation.index')]])<div class="hidden lg:flex items-center gap-x-5 text-sm font-semibold"><a href="{{ route('index') }}" class="hover:text-blue-600">Accueil</a>@foreach($navGroups as $label=>$links)<details class="relative group"><summary class="cursor-pointer hover:text-blue-600">{{ $label }}</summary><div class="absolute left-0 top-full pt-4 w-56"><div class="bg-white border border-gray-100 shadow-lg rounded-xl p-2">@foreach($links as $text=>$href)<a class="block p-3 rounded-lg hover:bg-blue-50 focus:bg-blue-50" href="{{ $href }}">{{ $text }}</a>@endforeach</div></div></details>@if($label==='Nos projets')<a href="{{ route('actualites.index') }}" class="hover:text-blue-600">Actualités</a>@endif @endforeach<a href="{{ url('/#contact') }}" class="hover:text-blue-600">Contact</a></div>
+            @php
+                $navGroups = [
+                    "L'association" => [
+                        'À propos' => url('/#about'),
+                        'Notre équipe' => route('equipe'),
+                    ],
+                    'Nos projets' => [
+                        'Tous les projets' => route('projets.index'),
+                        'Projets en cours' => route('projets.index', ['statut' => 'en_cours']),
+                        'Projets réalisés' => route('projets.index', ['statut' => 'realise']),
+                    ],
+                    'S’engager' => [
+                        'Devenir bénévole' => route('rejoindre'),
+                        'Parrainage' => route('parrainage.index'),
+                        'Devenir partenaire' => url('/#contact'),
+                        'Faire un don' => route('donation.index'),
+                    ],
+                ];
+            @endphp
+
+            <div class="hidden lg:flex items-center gap-x-5 text-sm font-semibold">
+                <a href="{{ route('index') }}" class="hover:text-blue-600">Accueil</a>
+                @foreach($navGroups as $label => $links)
+                    <details class="relative group">
+                        <summary class="cursor-pointer hover:text-blue-600">{{ $label }}</summary>
+                        <div class="absolute left-0 top-full pt-4 w-56">
+                            <div class="bg-white border border-gray-100 shadow-lg rounded-xl p-2">
+                                @foreach($links as $text => $href)
+                                    <a class="block p-3 rounded-lg hover:bg-blue-50 focus:bg-blue-50" href="{{ $href }}">{{ $text }}</a>
+                                @endforeach
+                            </div>
+                        </div>
+                    </details>
+                    @if($label === 'Nos projets')
+                        <a href="{{ route('actualites.index') }}" class="hover:text-blue-600">Actualités</a>
+                    @endif
+                @endforeach
+                <a href="{{ url('/#contact') }}" class="hover:text-blue-600">Contact</a>
+            </div>
             <div class="hidden lg:flex lg:flex-1 lg:justify-end">
                 <a href="{{ route('donation.index') }}"
                    class="rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 hover:shadow-lg hover:-translate-y-0.5 transition-all">
@@ -101,7 +139,23 @@
                 </div>
                 <div class="mt-6 flow-root">
                     <div class="-my-6 divide-y divide-gray-500/10">
-                        <div class="space-y-2 py-6"><a href="{{ route('index') }}" class="block py-3 font-semibold">Accueil</a>@foreach($navGroups as $label=>$links)<details class="py-2"><summary class="font-semibold cursor-pointer">{{ $label }}</summary><div class="pl-4">@foreach($links as $text=>$href)<a class="block py-3 text-gray-700" href="{{ $href }}">{{ $text }}</a>@endforeach</div></details>@if($label==='Nos projets')<a href="{{ route('actualites.index') }}" class="block py-3 font-semibold">Actualités</a>@endif @endforeach<a href="{{ url('/#contact') }}" class="block py-3 font-semibold">Contact</a></div>
+                        <div class="space-y-2 py-6">
+                            <a href="{{ route('index') }}" class="block py-3 font-semibold">Accueil</a>
+                            @foreach($navGroups as $label => $links)
+                                <details class="py-2">
+                                    <summary class="font-semibold cursor-pointer">{{ $label }}</summary>
+                                    <div class="pl-4">
+                                        @foreach($links as $text => $href)
+                                            <a class="block py-3 text-gray-700" href="{{ $href }}">{{ $text }}</a>
+                                        @endforeach
+                                    </div>
+                                </details>
+                                @if($label === 'Nos projets')
+                                    <a href="{{ route('actualites.index') }}" class="block py-3 font-semibold">Actualités</a>
+                                @endif
+                            @endforeach
+                            <a href="{{ url('/#contact') }}" class="block py-3 font-semibold">Contact</a>
+                        </div>
                         <div class="py-6">
                             <a href="{{ route('donation.index') }}" @click="mobileMenuOpen = false"
                                class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold text-blue-600 hover:bg-gray-50 text-center border border-blue-100 bg-blue-50">
@@ -172,6 +226,7 @@
                                 <li><a href="{{ url('/#services') }}"  class="text-sm text-gray-300 hover:text-white transition-colors">Nos projets</a></li>
                                 <li><a href="{{ url('/#temoignages') }}" class="text-sm text-gray-300 hover:text-white transition-colors">Témoignages</a></li>
                                 <li><a href="{{ route('equipe') }}"     class="text-sm text-gray-300 hover:text-white transition-colors">Notre Équipe</a></li>
+                                <li><a href="{{ route('parrainage.index') }}" class="text-sm text-gray-300 hover:text-white transition-colors">Parrainage</a></li>
                                 <li><a href="{{ route('rejoindre') }}"  class="text-sm text-gray-300 hover:text-white transition-colors">Nous rejoindre</a></li>
                             </ul>
                         </div>

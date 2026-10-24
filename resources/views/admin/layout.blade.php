@@ -24,6 +24,7 @@
 <a class="nav-item" href="{{ route('admin.projets.index') }}#{{ $panel }}">{{ $label }}</a>
 </li>
 @endforeach
+<li><a href="{{ route('admin.parrainage.edit') }}" class="nav-item {{ request()->routeIs('admin.parrainage.*') ? 'active' : '' }}" @if(request()->routeIs('admin.parrainage.*')) aria-current="page" @endif>Parrainage</a></li>
 </ul>
 </nav>
 <div class="sidebar-footer">

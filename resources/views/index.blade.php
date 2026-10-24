@@ -200,8 +200,11 @@
 </section>
 
 {{-- ═══════════════════════════════════════════════════════════════════════ --}}
-{{-- DEVENEZ BÉNÉVOLE                                                        --}}
+{{-- PARRAINAGE                                                              --}}
 {{-- ═══════════════════════════════════════════════════════════════════════ --}}
+@include('parrainage.teaser')
+
+{{-- DEVENEZ BÉNÉVOLE --}}
 <section id="volunteer" class="py-24 bg-blue-900 relative overflow-hidden">
     <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
     <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
@@ -349,7 +352,7 @@
 {{-- ═══════════════════════════════════════════════════════════════════════ --}}
 {{-- CONTACT & CARTE                                                         --}}
 {{-- ═══════════════════════════════════════════════════════════════════════ --}}
-<section id="contact" class="py-24 bg-white">
+<section id="contact" class="scroll-mt-24 py-24 bg-white">
     <div class="max-w-7xl mx-auto px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
             <!-- Carte & infos -->
@@ -416,6 +419,14 @@
                     </div>
                 @endif
 
+                @if($contactProgramme)
+                    <div class="mb-6 rounded-xl border border-blue-100 bg-blue-50 p-4 text-sm text-blue-900">
+                        <p class="font-semibold">Votre demande concerne : {{ $contactProgramme->titre }}</p>
+                        <p class="mt-2">Posez vos questions à notre équipe. Les modalités du parrainage seront définies ensemble.</p>
+                        <a href="{{ route('parrainage.index') }}" class="mt-2 inline-block underline">Revoir les programmes</a>
+                    </div>
+                @endif
+
                 <form method="POST" action="{{ route('message') }}" class="space-y-6">
                     @csrf
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -449,7 +460,7 @@
                     <div>
                         <label for="objet" class="block text-sm font-medium text-gray-700 mb-2">Objet</label>
                         <input type="text" id="objet" name="objet" required
-                               value="{{ old('objet') }}"
+                               value="{{ old('objet', $contactProgramme?->contact_subject) }}"
                                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 focus:bg-white transition-colors"
                                placeholder="Sujet de votre message">
                         @error('objet')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
